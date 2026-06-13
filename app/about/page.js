@@ -4,11 +4,32 @@ import { useState } from "react";
 
 export default function About() {
     const stats = [
-        { id: 1, value: "10.5k", text: "Sallers active our site", icon: "/icons/icon_shop.svg" },
-        { id: 2, value: "33k", text: "Mopnthly Produduct Sale", icon: "/icons/Icon-Moneybag.svg" },
-        { id: 3, value: "45.5k", text: "Customer active in our site", icon: "/icons/Icon-Shopping bag.svg" },
-        { id: 4, value: "25k", text: "Anual gross sale in our site", icon: "/icons/icon_shop.svg" },
+        {
+            id: 1,
+            value: "10.5k",
+            text: "Sallers active our site",
+            icon: "/icons/icon_shop.svg",
+        },
+        {
+            id: 2,
+            value: "33k",
+            text: "Monthly Product Sale",
+            icon: "/icons/Icon-Sale.svg",
+        },
+        {
+            id: 3,
+            value: "45.5k",
+            text: "Customer active in our site",
+            icon: "/icons/Icon-Shopping bag.svg",
+        },
+        {
+            id: 4,
+            value: "25k",
+            text: "Anual gross sale in our site",
+            icon: "/icons/Icon-Moneybag.svg",
+        },
     ];
+
     const team = [
         {
             name: "Tom Cruise",
@@ -26,7 +47,7 @@ export default function About() {
             image: "/images/man three.png",
         },
     ];
-    const [selectedCategory, setSelectedCategory] = useState(3);
+    const [selectedCategory, setSelectedCategory] = useState(2);
     return (
         <>
             <section className="w-full bg-white py-[80px]">
@@ -72,44 +93,44 @@ export default function About() {
             </section>
             <section className="w-full bg-white py-[80px]">
                 <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
-                    <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2 lg:grid-cols-4">
-                        {stats.map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => setSelectedCategory(item.id)}
-                                className={`flex h-[230px] shrink-0 flex-col items-center justify-center gap-[16px] cursor-pointer hover:opacity-85 rounded-[4px] border ${selectedCategory === item.id
-                                    ? "border-[#DB4444] bg-[#DB4444] text-white"
-                                    : "border-black/30 bg-white text-black"
-                                    }`}
-                            >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[30px]">
+                        {stats.map((item) => {
+                            const active = selectedCategory === item.id;
+                            return (
                                 <div
-                                    className={`flex h-[80px] w-[80px] items-center justify-center rounded-full ${item.active ? "bg-white" : "bg-black/70"
+                                    key={item.id}
+                                    onClick={() => setSelectedCategory(item.id)}
+                                    className={`h-[230px] cursor-pointer rounded-[4px] border flex flex-col items-center justify-center transition-all
+              ${active
+                                            ? "bg-[#DB4444] border-[#DB4444] text-white shadow-lg"
+                                            : "bg-white border-[#D9D9D9] text-black"
                                         }`}
                                 >
                                     <div
-                                        className={`flex h-[58px] w-[58px] items-center justify-center rounded-full ${item.active ? "bg-white text-black" : "bg-black text-white"
-                                            }`}
+                                        className={`w-[80px] h-[80px] rounded-full flex items-center justify-center
+                ${active ? "bg-[#E67C7C]" : "bg-[#D9D9D9]"}`}
                                     >
-                                        <img
-                                            src={item.icon}
-                                            alt={item.name}
-                                            className={`h-14 w-14 ${selectedCategory === item.id ? "invert brightness-0" : ""
-                                                }`}
-                                        />
-
+                                        <div
+                                            className={`w-[58px] h-[58px] rounded-full flex items-center justify-center
+                  ${active ? "bg-white" : "bg-black"}`}
+                                        >
+                                            <img
+                                                src={item.icon}
+                                                alt={item.text}
+                                                className={`w-10 h-10 ${active ? "" : "brightness-0 invert"
+                                                    }`}
+                                            />
+                                        </div>
                                     </div>
+                                    <h3 className="mt-6 inter font-bold text-[32px] leading-none tracking-[0.04em]">
+                                        {item.value}
+                                    </h3>
+                                    <p className="mt-3 poppins text-center text-[16px] leading-[24px] max-w-[190px]">
+                                        {item.text}
+                                    </p>
                                 </div>
-
-
-                                <h3 className="mt-[24px] inter text-[32px] font-bold leading-[30px] tracking-[0.04em]">
-                                    {item.value}
-                                </h3>
-
-                                <p className="mt-[12px] poppins text-center text-[16px] leading-[24px]">
-                                    {item.text}
-                                </p>
-                            </button>
-                        ))}
+                            );
+                        })}
                     </div>
                     <div className="mt-[140px] grid grid-cols-1 gap-[30px] md:grid-cols-3">
                         {team.map((person) => (
