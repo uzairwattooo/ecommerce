@@ -95,10 +95,10 @@ export default function Checkout() {
                                         Bank
                                     </span>
                                     <div className="flex items-center gap-[8px]">
-                                        <span className="text-[12px] text-pink-500">Bkash</span>
-                                        <span className="text-[12px] text-blue-600">VISA</span>
-                                        <span className="text-[12px] text-orange-500">Master</span>
-                                        <span className="text-[12px] text-red-500">Nagad</span>
+                                        <img src="/images/visa (4).png" alt="no" className="w-[38px]"/>
+                                        <img src="/images/visa (1).png" alt="no" className="w-[38px]"/>
+                                        <img src="/images/visa (2).png" alt="no" className="w-[38px]"/>
+                                        <img src="/images/visa (3).png" alt="no" className="w-[38px]"/>
                                     </div>
                                 </label>
                                 <label className="flex items-center gap-[16px] poppins text-[16px]">
