@@ -1,9 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { authClient } from "../lib/auth-client";
 
+
+const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "Contact", href: "/contact" },
+    { name: "About", href: "/about" },
+    { name: "Sign Up", href: "/signup" },
+];
 export default function Navbar() {
     const [open, setOpen] = useState(false);
     const [showAccountMenu, setShowAccountMenu] = useState(false);
@@ -18,6 +26,11 @@ export default function Navbar() {
 
         return () => document.removeEventListener("click", handleClick);
     }, [showAccountMenu]);
+    const router = useRouter();
+    const handleLogout = async () => {
+        await authClient.signOut();
+        router.replace("/login");
+    };
     return (
         <nav className="w-full mx-auto max-w-[1440px] border-b border-black/30 bg-white">
             <div className="mx-auto flex min-h-[60px] w-full max-w-[1170px] items-center justify-between mt-6 gap-6 px-4 lg:px-0">
@@ -161,7 +174,7 @@ export default function Navbar() {
 
                                             <button className="flex items-center gap-[16px]">
                                                 <span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M3 6.3V20.5C3 20.7652 3.10536 21.0196 3.29289 21.2071C3.48043 21.3946 3.73478 21.5 4 21.5H20C20.2652 21.5 20.5196 21.3946 20.7071 21.2071C20.8946 21.0196 21 20.7652 21 20.5V6.3H3Z" stroke="#FAFAFA" stroke-width="1.5" strokeLinejoin="round" />
+                                                    <path d="M3 6.3V20.5C3 20.7652 3.10536 21.0196 3.29289 21.2071C3.48043 21.3946 3.73478 21.5 4 21.5H20C20.2652 21.5 20.5196 21.3946 20.7071 21.2071C20.8946 21.0196 21 20.7652 21 20.5V6.3H3Z" stroke="#FAFAFA" strokeWidth="1.5" strokeLinejoin="round" />
                                                     <path d="M21 6.3L18.1665 2.5H5.8335L3 6.3M15.7775 9.6C15.7775 11.699 14.0865 13.4 12 13.4C9.9135 13.4 8.222 11.699 8.222 9.6" stroke="#FAFAFA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
                                                 </span>
@@ -190,7 +203,7 @@ export default function Navbar() {
                                                 </span>
                                             </button>
 
-                                            <button className="flex items-center gap-[16px]">
+                                            <button onClick={handleLogout} className="flex items-center gap-[16px]">
                                                 <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
                                                 </svg>
@@ -221,15 +234,38 @@ export default function Navbar() {
                 <div className="border-t border-black/10 bg-white px-4 py-4 md:hidden">
                     <ul className="flex flex-col gap-4 poppins">
                         {navLinks.map((link) => (
-                            <li key={link}>
-                                <Link href="#" className="text-[16px] leading-[24px] text-black">
-                                    {link}
+                            <li key={link.name}>
+                                <Link
+                                    href={link.href}
+                                    onClick={() => setOpen(false)}
+                                    className="block text-[16px] leading-[24px] text-black"
+                                >
+                                    {link.name}
                                 </Link>
                             </li>
                         ))}
                     </ul>
+
                     <div className="relative mt-4 h-[38px] w-full rounded-[4px] bg-[#F5F5F5]">
-                        <input type="text" placeholder="What are you looking for?" className="h-full w-full bg-transparent pl-[20px] pr-[44px] poppins text-[12px] outline-none" />
+                        <input
+                            type="text"
+                            placeholder="What are you looking for?"
+                            className="h-full w-full bg-transparent pl-[20px] pr-[44px] poppins text-[12px] outline-none"
+                        />
+
+                        <svg
+                            className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                        >
+                            <circle cx="11" cy="11" r="7" stroke="black" strokeWidth="2" />
+                            <path
+                                d="M16.5 16.5L21 21"
+                                stroke="black"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                            />
+                        </svg>
                     </div>
                 </div>
             )}

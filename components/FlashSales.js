@@ -187,8 +187,8 @@ export default function FlashSales() {
     return (
         <>
             <section className="w-full overflow-hidden bg-white py-[70px]">
-                <div className="mx-auto max-w-[1170px] px-4 lg:px-0 border-b border-[#ECECEC] py-20">
-                    <div className="mb-[40px] flex items-end justify-between">
+                <div className="mx-auto max-w-[1170px] border-b border-[#ECECEC] px-4 py-20 lg:px-0">
+                    <div className="mb-[40px] flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                         <div>
                             <div className="mb-[24px] flex items-center gap-[16px]">
                                 <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
@@ -196,24 +196,26 @@ export default function FlashSales() {
                                     Today’s
                                 </p>
                             </div>
-                            <div className="flex items-end gap-[87px]">
-                                <h2 className="inter text-[36px] font-semibold leading-[48px] tracking-[0.04em] text-black">
+
+                            <div className="flex flex-col gap-6 md:flex-row md:items-end md:gap-[87px]">
+                                <h2 className="inter text-[32px] font-semibold leading-[42px] tracking-[0.04em] text-black md:text-[36px] md:leading-[48px]">
                                     Flash Sales
                                 </h2>
-                                <div className="hidden items-end gap-[17px] md:flex">
+
+                                <div className="flex items-end gap-[10px] overflow-x-auto md:gap-[17px]">
                                     {["Days", "Hours", "Minutes", "Seconds"].map((label, i) => (
-                                        <div key={label} className="flex items-end gap-[17px]">
+                                        <div key={label} className="flex shrink-0 overflow-hidden items-end gap-[10px] md:gap-[17px]">
                                             <div>
                                                 <p className="poppins text-[12px] font-medium leading-[18px]">
                                                     {label}
                                                 </p>
-                                                <p className="inter text-[32px] font-bold leading-[30px] tracking-[0.04em]">
+                                                <p className="inter text-[28px] font-bold leading-[30px] tracking-[0.04em] md:text-[32px]">
                                                     {["03", "23", "19", "56"][i]}
                                                 </p>
                                             </div>
 
                                             {i !== 3 && (
-                                                <span className="pb-[4px] text-[28px] font-bold text-[#E07575]">
+                                                <span className="pb-[4px] text-[24px] font-bold text-[#E07575] md:text-[28px]">
                                                     :
                                                 </span>
                                             )}
@@ -222,33 +224,33 @@ export default function FlashSales() {
                                 </div>
                             </div>
                         </div>
+
                         <div className="hidden gap-[8px] md:flex">
                             <button
                                 onClick={() => scrollProducts("left")}
-                                className="flex h-[46px] w-[46px] items-center justify-center cursor-pointer hover:opacity-85 rounded-full bg-[#F5F5F5]"
+                                className="flex h-[46px] w-[46px] cursor-pointer items-center justify-center rounded-full bg-[#F5F5F5] hover:opacity-85"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                                 </svg>
-
                             </button>
 
                             <button
                                 onClick={() => scrollProducts("right")}
-                                className="flex h-[46px] w-[46px] items-center justify-center cursor-pointer hover:opacity-85 rounded-full bg-[#F5F5F5]"
+                                className="flex h-[46px] w-[46px] cursor-pointer items-center justify-center rounded-full bg-[#F5F5F5] hover:opacity-85"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                 </svg>
-
                             </button>
                         </div>
                     </div>
+
                     <div
                         ref={scrollRef}
-                        className="w-[calc(100%+138px)] overflow-x-auto scroll-smooth pb-2 [&::-webkit-scrollbar]:hidden"
+                        className="-mx-4 overflow-x-auto scroll-smooth px-4 pb-2 lg:mx-0 lg:w-[calc(100%+138px)] lg:px-0 [&::-webkit-scrollbar]:hidden"
                     >
-                        <div className="flex h-[350px] w-[270px] gap-[20px]">
+                        <div className="flex h-[350px] w-max gap-[20px] xl:gap-[19px] md:gap-[30px]">
                             {products.map((item, index) => (
                                 <div key={`${item.name}-${index}`} className="h-[350px] w-[270px] shrink-0">
                                     <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
@@ -257,8 +259,13 @@ export default function FlashSales() {
                                         </span>
 
                                         <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
-                                            <button className="flex bg-white h-[40px] w-[40px] items-center justify-center rounded-full cursor-pointer hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg> </button>
-                                            <button className="flex bg-white h-[40px] w-[40px] items-center justify-center rounded-full cursor-pointer hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </button>
+                                            <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg>
+                                            </button>
+
+                                            <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg>
+                                            </button>
                                         </div>
 
                                         <div className="absolute left-[40px] top-[35px] flex h-[180px] w-[190px] items-center justify-center">
@@ -268,7 +275,8 @@ export default function FlashSales() {
                                                 className="h-[180px] w-[190px] object-contain"
                                             />
                                         </div>
-                                        <button className="absolute bottom-0 left-0 h-[41px] w-full cursor-pointer  translate-y-full bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+
+                                        <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
                                             Add To Cart
                                         </button>
                                     </div>
@@ -292,14 +300,17 @@ export default function FlashSales() {
                             ))}
                         </div>
                     </div>
+
                     <div className="mt-[60px] flex justify-center">
-                        <button className="h-[56px] w-[234px] rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white cursor-pointer hover:opacity-85"> View All Products </button>
+                        <button className="h-[56px] w-[234px] cursor-pointer rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white hover:opacity-85">
+                            View All Products
+                        </button>
                     </div>
                 </div>
             </section>
-            <section className="w-full max-w-[1440px] mx-auto overflow-hidden bg-white pb-20 border-b border-[#ECECEC]">
+            <section className="mx-auto w-full max-w-[1440px] overflow-hidden bg-white pb-12 border-b border-[#ECECEC] sm:pb-16 lg:pb-20">
                 <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
-                    <div className="mb-[40px] flex items-end justify-between">
+                    <div className="mb-[40px] flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                         <div>
                             <div className="mb-[24px] flex items-center gap-[16px]">
                                 <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
@@ -307,12 +318,14 @@ export default function FlashSales() {
                                     Categories
                                 </p>
                             </div>
-                            <div className="flex items-end gap-[87px]">
-                                <h2 className="inter text-[36px] font-semibold leading-[48px] tracking-[0.04em] text-black">
+
+                            <div className="flex items-end">
+                                <h2 className="inter text-[28px] font-semibold leading-[36px] tracking-[0.04em] text-black sm:text-[32px] sm:leading-[42px] md:text-[36px] md:leading-[48px]">
                                     Browse By Category
                                 </h2>
                             </div>
                         </div>
+
                         <div className="hidden gap-[8px] md:flex">
                             <button
                                 onClick={() => scrollcategory("left")}
@@ -322,6 +335,7 @@ export default function FlashSales() {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                                 </svg>
                             </button>
+
                             <button
                                 onClick={() => scrollcategory("right")}
                                 className="flex h-[46px] w-[46px] items-center justify-center cursor-pointer hover:opacity-85 rounded-full bg-[#F5F5F5]"
@@ -332,7 +346,11 @@ export default function FlashSales() {
                             </button>
                         </div>
                     </div>
-                    <div ref={scrolRef} className="flex gap-[30px] overflow-x-auto [&::-webkit-scrollbar]:hidden scroll-smooth pb-2">
+
+                    <div
+                        ref={scrolRef}
+                        className="-mx-4 flex gap-[20px] overflow-x-auto scroll-smooth px-4 pb-2 sm:gap-[30px] lg:mx-0 lg:px-0 [&::-webkit-scrollbar]:hidden"
+                    >
                         {categories.map((item) => (
                             <button
                                 key={item.id}
@@ -357,9 +375,9 @@ export default function FlashSales() {
                     </div>
                 </div>
             </section>
-            <section className="w-full max-w-[1440px] mx-auto overflow-hidden bg-white py-20 border-b border-[#ECECEC]">
+            <section className="mx-auto w-full max-w-[1440px] overflow-hidden border-b border-[#ECECEC] bg-white py-12 sm:py-16 lg:py-20">
                 <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
-                    <div className="mb-[40px] flex items-end justify-between">
+                    <div className="mb-[40px] flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                         <div>
                             <div className="mb-[24px] flex items-center gap-[16px]">
                                 <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
@@ -367,37 +385,47 @@ export default function FlashSales() {
                                     This Month
                                 </p>
                             </div>
-                            <div className="flex items-end gap-[87px]">
-                                <h2 className="inter text-[36px] font-semibold leading-[48px] tracking-[0.04em] text-black">
+
+                            <div className="flex items-end">
+                                <h2 className="inter text-[28px] font-semibold leading-[36px] tracking-[0.04em] text-black sm:text-[32px] sm:leading-[42px] md:text-[36px] md:leading-[48px]">
                                     Best Selling Products
                                 </h2>
                             </div>
                         </div>
+
                         <div className="hidden gap-[8px] md:flex">
-                            <button className="h-[56px] w-[159px] rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white cursor-pointer hover:opacity-85"> View All</button>
+                            <button className="h-[56px] w-[159px] cursor-pointer rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white hover:opacity-85">
+                                View All
+                            </button>
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2 lg:grid-cols-4">
+
+                    <div className="grid grid-cols-1 justify-items-center gap-[30px] sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start">
                         {allproduct.map((item, index) => (
                             <div
                                 key={`${item.name}-${index}`}
                                 className="w-full max-w-[270px]"
                             >
-                                <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-
+                                <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
                                     <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
-                                        <button className="flex bg-white h-[40px] w-[40px] items-center justify-center rounded-full cursor-pointer hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg> </button>
-                                        <button className="flex bg-white h-[40px] w-[40px] items-center justify-center rounded-full cursor-pointer hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </button>
+                                        <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg>
+                                        </button>
+
+                                        <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg>
+                                        </button>
                                     </div>
 
-                                    <div className="absolute left-[40px] top-[35px] flex h-[180px] w-[190px] items-center justify-center">
+                                    <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
                                         <img
                                             src={item.image}
                                             alt={item.name}
                                             className="h-[180px] w-[190px] object-contain"
                                         />
                                     </div>
-                                    <button className="absolute bottom-0 left-0 h-[41px] w-full cursor-pointer  translate-y-full bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+
+                                    <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
                                         Add To Cart
                                     </button>
                                 </div>
@@ -420,20 +448,28 @@ export default function FlashSales() {
                             </div>
                         ))}
                     </div>
+
+                    <div className="mt-[40px] flex justify-center md:hidden">
+                        <button className="h-[56px] w-[159px] cursor-pointer rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white hover:opacity-85">
+                            View All
+                        </button>
+                    </div>
                 </div>
-            </section >
-            <section className="w-full bg-white py-[70px]">
-                <div className="mx-auto flex min-h-[500px] w-full max-w-[1170px] items-center justify-between bg-black px-[56px] py-[37px]">
-                    <div className="max-w-[443px]">
+            </section>
+            <section className="w-full bg-white py-12 sm:py-16 lg:py-[70px]">
+                <div className="mx-auto flex max-w-[1170px] flex-col-reverse items-center justify-between gap-10 bg-black px-6 py-10 sm:px-10 lg:min-h-[500px] lg:flex-row lg:px-[56px] lg:py-[37px]">
+
+                    {/* Content */}
+                    <div className="max-w-[443px] text-center lg:text-left">
                         <p className="poppins text-[16px] font-semibold leading-[20px] text-[#00FF66]">
                             Categories
                         </p>
 
-                        <h2 className="mt-[32px] inter text-[48px] font-semibold leading-[60px] tracking-[0.04em] text-white">
+                        <h2 className="mt-[20px] sm:mt-[24px] lg:mt-[32px] inter text-[30px] leading-[40px] sm:text-[40px] sm:leading-[50px] lg:text-[48px] lg:leading-[60px] font-semibold tracking-[0.04em] text-white">
                             Enhance Your <br /> Music Experience
                         </h2>
 
-                        <div className="mt-[32px] flex gap-[24px]">
+                        <div className="mt-[24px] flex flex-wrap justify-center gap-4 lg:mt-[32px] lg:justify-start lg:gap-[24px]">
                             {[
                                 { value: "23", label: "Hours" },
                                 { value: "05", label: "Days" },
@@ -453,229 +489,235 @@ export default function FlashSales() {
                                 </div>
                             ))}
                         </div>
-                        <button className="mt-[40px] h-[56px] w-[171px] cursor-pointer hover:opacity-85 rounded-[4px] bg-[#00FF66] poppins text-[16px] font-medium text-white">
+
+                        <button className="mt-[32px] h-[56px] w-[171px] cursor-pointer rounded-[4px] bg-[#00FF66] poppins text-[16px] font-medium text-white hover:opacity-85 lg:mt-[40px]">
                             Buy Now!
                         </button>
                     </div>
-                    <div className="relative h-[420px] w-[600px]">
+
+                    {/* Image */}
+                    <div className="relative flex w-full justify-center lg:h-[420px] lg:w-[600px]">
                         <img
                             src="/images/Frame 694.png"
                             alt="Music speaker"
-                            className="h-[420px] w-[600px] object-contain"
+                            className="h-auto w-full max-w-[280px] object-contain sm:max-w-[420px] lg:h-[420px] lg:w-[600px] xl:max-w-[568px]"
                         />
                     </div>
+
                 </div>
             </section>
-            <section className="w-full bg-white py-[70px]">
-                <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
-                    <div className="mb-[60px] flex items-end justify-between">
-                        <div>
-                            <div className="mb-[20px] flex items-center gap-[16px]">
-                                <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
-                                <p className="poppins text-[16px] font-semibold leading-[20px] text-[#DB4444]">
-                                    Our Products
-                                </p>
-                            </div>
+            <section className="w-full bg-white py-12 sm:py-16 lg:py-[70px]">
+  <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
+    <div className="mb-[40px] flex flex-col gap-6 md:mb-[60px] md:flex-row md:items-end md:justify-between">
+      <div>
+        <div className="mb-[20px] flex items-center gap-[16px]">
+          <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
+          <p className="poppins text-[16px] font-semibold leading-[20px] text-[#DB4444]">
+            Our Products
+          </p>
+        </div>
 
-                            <h2 className="inter text-[36px] font-semibold leading-[48px] tracking-[0.04em] text-black">
-                                Explore Our Products
-                            </h2>
-                        </div>
+        <h2 className="inter text-[28px] font-semibold leading-[36px] tracking-[0.04em] text-black sm:text-[32px] sm:leading-[42px] md:text-[36px] md:leading-[48px]">
+          Explore Our Products
+        </h2>
+      </div>
 
-                        <div className="hidden gap-[8px] md:flex">
-                            <button className="flex h-[46px] w-[46px] items-center justify-center cursor-pointer hover:opacity-85 rounded-full bg-[#F5F5F5]"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                                </svg>
-                            </button>
-                            <button className="flex h-[46px] w-[46px] items-center justify-center cursor-pointer hover:opacity-85 rounded-full bg-[#F5F5F5]"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-1 gap-x-[30px] gap-y-[60px] sm:grid-cols-2 lg:grid-cols-4">
-                        {itemsData.map((item, index) => (
-                            <div key={`${item.name}-${index}`} className="w-full max-w-[270px]">
-                                <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-                                    {item.badge && (
-                                        <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#00FF66] px-[12px] py-[4px] poppins text-[12px] text-white">
-                                            {item.badge}
-                                        </span>
-                                    )}
-                                    <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
-                                        <button className="flex bg-white h-[40px] w-[40px] items-center justify-center rounded-full cursor-pointer hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg> </button>
-                                        <button className="flex bg-white h-[40px] w-[40px] items-center justify-center rounded-full cursor-pointer hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </button>
-                                    </div>
-                                    <div className="absolute left-[40px] top-[35px] flex h-[180px] w-[190px] items-center justify-center">
-                                        <img
-                                            src={
-                                                item.variants?.length
-                                                    ? item.variants[item.selectedColor || 0].image
-                                                    : item.image
-                                            }
-                                            alt={item.name}
-                                            className="h-[180px] w-[190px] object-contain"
-                                        />
+      <div className="hidden gap-[8px] md:flex">
+        <button className="flex h-[46px] w-[46px] cursor-pointer items-center justify-center rounded-full bg-[#F5F5F5] hover:opacity-85">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+        </button>
 
-                                    </div>
-                                    <button className="absolute bottom-0 left-0 h-[41px] w-full cursor-pointer  translate-y-full bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
-                                        Add To Cart
-                                    </button>
-                                </div>
-                                <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
-                                    {item.name}
-                                </h3>
-                                <div className="mt-[8px] flex items-center gap-[8px] poppins text-[16px] font-medium leading-[24px]">
-                                    <span className="text-[#DB4444]">{item.price}</span>
-                                    <span className="text-[14px] text-[#FFAD33]">★★★★★</span>
-                                    <span className="poppins text-[14px] font-semibold text-black/50">
-                                        {item.reviews}
-                                    </span>
-                                </div>
+        <button className="flex h-[46px] w-[46px] cursor-pointer items-center justify-center rounded-full bg-[#F5F5F5] hover:opacity-85">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+          </svg>
+        </button>
+      </div>
+    </div>
 
+    <div className="grid grid-cols-1 justify-items-center gap-x-[30px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start lg:gap-y-[60px]">
+      {itemsData.map((item, index) => (
+        <div key={`${item.name}-${index}`} className="w-full max-w-[270px]">
+          <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
+            {item.badge && (
+              <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#00FF66] px-[12px] py-[4px] poppins text-[12px] text-white">
+                {item.badge}
+              </span>
+            )}
 
-                                {item.variants?.length > 0 && (
-                                    <div className="mt-[8px] flex gap-[8px]">
-                                        {item.variants.map((variant, colorIndex) => (
-                                            <button
-                                                key={colorIndex}
-                                                onClick={() => {
-                                                    const updated = [...itemsData];
-                                                    updated[index] = {
-                                                        ...updated[index],
-                                                        selectedColor: colorIndex,
-                                                    };
-                                                    setItemsData(updated);
-                                                }}
-                                                className={`flex h-[18px] w-[18px] cursor-pointer hover:opacity-85 items-center justify-center rounded-full border ${item.selectedColor === colorIndex
-                                                    ? "border-black"
-                                                    : "border-transparent"
-                                                    }`}
-                                            >
-                                                <span
-                                                    className="h-[14px] w-[14px] rounded-full"
-                                                    style={{ backgroundColor: variant.color }}
-                                                />
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+            <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
+              <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg> </button>
 
-                    <div className="mt-[60px] flex justify-center">
-                        <button className="h-[56px] w-[234px] rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white cursor-pointer hover:opacity-85">
-                            View All Products
-                        </button>
-                    </div>
-                </div>
-            </section>
-            <section className="w-full bg-white py-[70px]">
-                <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
-                    <div className="mb-[60px] flex items-end justify-between">
-                        <div>
-                            <div className="mb-[20px] flex items-center gap-[16px]">
-                                <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
-                                <p className="poppins text-[16px] font-semibold leading-[20px] text-[#DB4444]">
-                                    Featured
-                                </p>
-                            </div>
+              <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </button>
+            </div>
 
-                            <h2 className="inter text-[36px] font-semibold leading-[48px] tracking-[0.04em] text-black">
-                                New Arrival
-                            </h2>
-                        </div>
-                    </div>
-                    <section className="w-full bg-white">
-                        <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
-                            <div className="grid grid-cols-1 gap-[30px] lg:grid-cols-2">
+            <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
+              <img
+                src={
+                  item.variants?.length
+                    ? item.variants[item.selectedColor || 0].image
+                    : item.image
+                }
+                alt={item.name}
+                className="h-[180px] w-[190px] object-contain"
+              />
+            </div>
 
-                                <div className="relative h-[600px] overflow-hidden rounded-[4px] bg-black">
-                                    <img
-                                        src="/images/one.png"
-                                        alt="PlayStation 5"
-                                        className="absolute bottom-0 left-0 h-full w-full object-cover"
-                                    />
+            <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+              Add To Cart
+            </button>
+          </div>
 
-                                    <div className="absolute bottom-[32px] left-[32px] text-white">
-                                        <h3 className="inter text-[24px] font-semibold leading-[24px]">
-                                            PlayStation 5
-                                        </h3>
-                                        <p className="mt-[16px] max-w-[242px] poppins text-[14px] leading-[21px]">
-                                            Black and White version of the PS5 coming out on sale.
-                                        </p>
-                                        <button className="mt-[16px] border-b border-[#5D5D5D] poppins text-[16px] font-medium cursor-pointer hover:opacity-85">
-                                            Shop Now
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="grid h-[600px] grid-cols-2 gap-[30px]">
-                                    <div className="relative col-span-2 h-[284px] overflow-hidden rounded-[4px] bg-black">
-                                        <img
-                                            src="/images/tow.jpg"
-                                            alt="Women’s Collections"
-                                            className="absolute right-0 top-0 h-full max-h-[286px] w-full max-w-[432px] object-cover scale-x-[-1]"
-                                        />
+          <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
+            {item.name}
+          </h3>
 
-                                        <div className="absolute bottom-[24px] left-[24px] text-white">
-                                            <h3 className="inter text-[24px] font-semibold">
-                                                Women’s Collections
-                                            </h3>
-                                            <p className="mt-[16px] max-w-[255px] poppins text-[14px] leading-[21px]">
-                                                Featured woman collections that give you another vibe.
-                                            </p>
-                                            <button className="mt-[16px] border-b border-[#5D5D5D] poppins text-[16px] font-medium cursor-pointer hover:opacity-85">
-                                                Shop Now
-                                            </button>
-                                        </div>
-                                    </div>
+          <div className="mt-[8px] flex flex-wrap items-center gap-[8px] poppins text-[16px] font-medium leading-[24px]">
+            <span className="text-[#DB4444]">{item.price}</span>
+            <span className="text-[14px] text-[#FFAD33]">★★★★★</span>
+            <span className="poppins text-[14px] font-semibold text-black/50">
+              {item.reviews}
+            </span>
+          </div>
 
-                                    <div className="relative h-[284px] overflow-hidden rounded-[4px] bg-black">
-                                        <img
-                                            src="/images/four.png"
-                                            alt="Speakers"
-                                            className="absolute left-10 top-4 h-full w-full object-cover"
-                                        />
+          {item.variants?.length > 0 && (
+            <div className="mt-[8px] flex gap-[8px]">
+              {item.variants.map((variant, colorIndex) => (
+                <button
+                  key={colorIndex}
+                  onClick={() => {
+                    const updated = [...itemsData];
+                    updated[index] = {
+                      ...updated[index],
+                      selectedColor: colorIndex,
+                    };
+                    setItemsData(updated);
+                  }}
+                  className={`flex h-[18px] w-[18px] cursor-pointer items-center justify-center rounded-full border hover:opacity-85 ${
+                    item.selectedColor === colorIndex
+                      ? "border-black"
+                      : "border-transparent"
+                  }`}
+                >
+                  <span
+                    className="h-[14px] w-[14px] rounded-full"
+                    style={{ backgroundColor: variant.color }}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
 
-                                        <div className="absolute bottom-[24px] left-[24px] text-white">
-                                            <h3 className="inter text-[24px] font-semibold">Speakers</h3>
-                                            <p className="mt-[8px] poppins text-[14px] leading-[21px]">
-                                                Amazon wireless speakers
-                                            </p>
-                                            <button className="mt-[8px] border-b border-[#5D5D5D] poppins text-[16px] font-medium cursor-pointer hover:opacity-85">
-                                                Shop Now
-                                            </button>
-                                        </div>
-                                    </div>
+    <div className="mt-[60px] flex justify-center">
+      <button className="h-[56px] w-[234px] cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85">
+        View All Products
+      </button>
+    </div>
+  </div>
+</section>
+           <section className="w-full bg-white py-12 sm:py-16 lg:py-[70px]">
+  <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
+    <div className="mb-[40px] flex items-end justify-between lg:mb-[60px]">
+      <div>
+        <div className="mb-[20px] flex items-center gap-[16px]">
+          <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
+          <p className="poppins text-[16px] font-semibold leading-[20px] text-[#DB4444]">
+            Featured
+          </p>
+        </div>
 
-                                    <div className="relative h-[286px] overflow-hidden rounded-[4px] bg-[#000000]">
-                                        <img
-                                            src="/images/three.png"
-                                            alt="Perfume"
-                                            className="absolute inset-0 left-0 top-0  h-full w-full  "
-                                        />
+        <h2 className="inter text-[28px] font-semibold leading-[36px] tracking-[0.04em] text-black sm:text-[32px] sm:leading-[42px] md:text-[36px] md:leading-[48px]">
+          New Arrival
+        </h2>
+      </div>
+    </div>
 
-                                        <div className="absolute bottom-[24px] left-[24px] text-white">
-                                            <h3 className="inter text-[24px] font-semibold">Perfume</h3>
-                                            <p className="mt-[8px] poppins text-[14px] leading-[21px]">
-                                                GUCCI INTENSE OUD EDP
-                                            </p>
-                                            <button className="mt-[8px] border-b border-[#5D5D5D] poppins text-[16px] font-medium cursor-pointer hover:opacity-85">
-                                                Shop Now
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </section>
+    <div className="grid grid-cols-1 gap-[30px] lg:grid-cols-2">
+      <div className="relative h-[420px] overflow-hidden rounded-[4px] bg-black sm:h-[520px] lg:h-[600px]">
+        <img
+          src="/images/one.png"
+          alt="PlayStation 5"
+          className="absolute bottom-0 left-0 h-full w-full object-cover"
+        />
+
+        <div className="absolute bottom-[24px] left-[24px] text-white sm:bottom-[32px] sm:left-[32px]">
+          <h3 className="inter text-[24px] font-semibold leading-[24px]">
+            PlayStation 5
+          </h3>
+          <p className="mt-[16px] max-w-[242px] poppins text-[14px] leading-[21px]">
+            Black and White version of the PS5 coming out on sale.
+          </p>
+          <button className="mt-[16px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
+            Shop Now
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2 lg:h-[600px]">
+        <div className="relative h-[284px] overflow-hidden rounded-[4px] bg-black sm:col-span-2">
+          <img
+            src="/images/tow.jpg"
+            alt="Women’s Collections"
+            className="absolute right-0 top-0 h-full max-h-[286px] w-full max-w-[432px] object-cover scale-x-[-1]"
+          />
+
+          <div className="absolute bottom-[24px] left-[24px] text-white">
+            <h3 className="inter text-[22px] font-semibold sm:text-[24px]">
+              Women’s Collections
+            </h3>
+            <p className="mt-[16px] max-w-[255px] poppins text-[14px] leading-[21px]">
+              Featured woman collections that give you another vibe.
+            </p>
+            <button className="mt-[16px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
+              Shop Now
+            </button>
+          </div>
+        </div>
+
+        <div className="relative h-[284px] overflow-hidden rounded-[4px] bg-black">
+          <img
+            src="/images/four.png"
+            alt="Speakers"
+            className="absolute left-10 top-4 h-full w-full object-cover"
+          />
+
+          <div className="absolute bottom-[24px] left-[24px] text-white">
+            <h3 className="inter text-[24px] font-semibold">Speakers</h3>
+            <p className="mt-[8px] poppins text-[14px] leading-[21px]">
+              Amazon wireless speakers
+            </p>
+            <button className="mt-[8px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
+              Shop Now
+            </button>
+          </div>
+        </div>
+
+        <div className="relative h-[286px] overflow-hidden rounded-[4px] bg-[#000000]">
+          <img
+            src="/images/three.png"
+            alt="Perfume"
+            className="absolute inset-0 left-0 top-0 h-full w-full"
+          />
+
+          <div className="absolute bottom-[24px] left-[24px] text-white">
+            <h3 className="inter text-[24px] font-semibold">Perfume</h3>
+            <p className="mt-[8px] poppins text-[14px] leading-[21px]">
+              GUCCI INTENSE OUD EDP
+            </p>
+            <button className="mt-[8px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
+              Shop Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
             <section className="w-full max-w-[1260px] mx-auto bg-white pb-8 pt-[80px]">
                 <div className="mx-auto max-w-[943px]">
                     <div className="flex flex-col items-center justify-between gap-10 md:flex-row">

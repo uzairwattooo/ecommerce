@@ -50,22 +50,28 @@ export default function About() {
     const [selectedCategory, setSelectedCategory] = useState(2);
     return (
         <>
-            <section className="w-full bg-white py-[80px]">
+            <section className="w-full bg-white py-12 sm:py-16 lg:py-[80px]">
                 <div className="mx-auto max-w-[1440px]">
-                    <div className="mx-auto mb-[80px] max-w-[1170px] px-4 lg:px-0">
+                    <div className="mx-auto mb-[50px] max-w-[1170px] px-4 lg:mb-[80px] lg:px-0">
                         <div className="flex gap-[12px] poppins text-[14px] leading-[21px]">
-                            <Link href="/" className="text-black/50">Home</Link>
+                            <Link href="/" className="text-black/50">
+                                Home
+                            </Link>
                             <span className="text-black/50">/</span>
-                            <Link href="/about" className="text-black">About</Link>
+                            <Link href="/about" className="text-black">
+                                About
+                            </Link>
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-center justify-between gap-[60px] lg:flex-row">
+                    <div className="flex flex-col-reverse items-center justify-between gap-[40px] lg:flex-row lg:gap-[60px]">
+                        {/* Content */}
                         <div className="w-full px-4 lg:ml-[135px] lg:w-[525px] lg:px-0">
-                            <h1 className="inter text-[54px] font-semibold leading-[64px] tracking-[0.06em] text-black">
+                            <h1 className="inter text-[34px] font-semibold leading-[42px] tracking-[0.06em] text-black sm:text-[44px] sm:leading-[54px] lg:text-[54px] lg:leading-[64px]">
                                 Our Story
                             </h1>
-                            <div className="mt-[40px] space-y-[24px] poppins text-[16px] font-normal leading-[26px] text-black">
+
+                            <div className="mt-[24px] space-y-[20px] poppins text-[15px] font-normal leading-[24px] text-black sm:mt-[30px] sm:text-[16px] sm:leading-[26px] lg:mt-[40px] lg:space-y-[24px]">
                                 <p>
                                     Launced in 2015, Exclusive is South Asia’s premier online
                                     shopping marketplace with an active presense in Bangladesh.
@@ -81,7 +87,9 @@ export default function About() {
                                 </p>
                             </div>
                         </div>
-                        <div className="h-[609px] w-full overflow-hidden rounded-l-[4px] lg:w-[705px]">
+
+                        {/* Image */}
+                        <div className="h-[280px] w-full overflow-hidden rounded-[4px] sm:h-[420px] lg:h-[609px] lg:w-[705px] lg:rounded-l-[4px]">
                             <img
                                 src="/images/Side Image (1).png"
                                 alt="Our Story"
