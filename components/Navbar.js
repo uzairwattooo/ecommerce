@@ -144,7 +144,7 @@ export default function Navbar() {
 
                                         <div className="flex flex-col gap-[20px]">
 
-                                            <button className="flex items-center gap-[16px]">
+                                            <button className="flex cursor-pointer hover:opacity-85 items-center gap-[16px]">
                                                 <span> <svg
                                                     width="32"
                                                     height="32"
@@ -172,7 +172,7 @@ export default function Navbar() {
                                                 </span>
                                             </button>
 
-                                            <button className="flex items-center gap-[16px]">
+                                            <button className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
                                                 <span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 6.3V20.5C3 20.7652 3.10536 21.0196 3.29289 21.2071C3.48043 21.3946 3.73478 21.5 4 21.5H20C20.2652 21.5 20.5196 21.3946 20.7071 21.2071C20.8946 21.0196 21 20.7652 21 20.5V6.3H3Z" stroke="#FAFAFA" strokeWidth="1.5" strokeLinejoin="round" />
                                                     <path d="M21 6.3L18.1665 2.5H5.8335L3 6.3M15.7775 9.6C15.7775 11.699 14.0865 13.4 12 13.4C9.9135 13.4 8.222 11.699 8.222 9.6" stroke="#FAFAFA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -183,7 +183,7 @@ export default function Navbar() {
                                                 </span>
                                             </button>
 
-                                            <button className="flex items-center gap-[16px]">
+                                            <button className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
                                                 <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                 </svg>
@@ -193,7 +193,7 @@ export default function Navbar() {
                                                 </span>
                                             </button>
 
-                                            <button className="flex items-center gap-[16px]">
+                                            <button className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
                                                 <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
                                                 </svg>

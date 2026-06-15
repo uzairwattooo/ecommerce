@@ -1,30 +1,21 @@
 import { NextResponse } from "next/server";
 
-const protectedRoutes = [
-  "/",
-  "/cart",
-  "/wishlist",
-  "/checkout",
-  "/account",
-  "/product-detail",
-  "/contact",
-  "/about",
-];
+const authPages = ["/login", "/signup"];
 
-export async function proxy(req) {
+export function proxy(req) {
   const { pathname } = req.nextUrl;
 
-  const isProtected = protectedRoutes.some((route) =>
-    pathname === route || pathname.startsWith(route + "/")
-  );
-
-  if (!isProtected) return NextResponse.next();
-
-  const sessionToken =
+  const token =
     req.cookies.get("better-auth.session_token")?.value ||
     req.cookies.get("__Secure-better-auth.session_token")?.value;
 
-  if (!sessionToken) {
+  const isAuthPage = authPages.includes(pathname);
+
+  if (token && isAuthPage) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  if (!token && !isAuthPage) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

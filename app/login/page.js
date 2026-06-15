@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -10,7 +11,7 @@ export default function LoginPage() {
     const [step, setStep] = useState("email");
     const [loading, setLoading] = useState(false);
     const [seconds, setSeconds] = useState(0);
-
+    const router = useRouter();
     useEffect(() => {
         if (seconds <= 0) return;
 
@@ -76,7 +77,7 @@ export default function LoginPage() {
         setLoading(true);
 
         const { error } = await authClient.signIn.emailOtp({
-            email,
+            email: email.trim().toLowerCase(),
             otp,
         });
 
@@ -86,8 +87,13 @@ export default function LoginPage() {
             toast.error(error.message || "OTP galat ya expire ho gaya");
             return;
         }
+        const session = await authClient.getSession();
 
-        window.location.href = "/";
+        if (session.data.user.role === "admin") {
+            router.push("/admin");
+        } else {
+            router.push("/");
+        }
     };
 
     const formatTime = (time) => {
