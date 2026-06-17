@@ -1,58 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
-const products = [
-    {
-        discount: "-40%",
-        image: "/images/Frame 611.png",
-        name: "HAVIT HV-G92 Gamepad",
-        price: "$120",
-        oldPrice: "$160",
-        reviews: "(88)",
-    },
-    {
-        discount: "-35%",
-        image: "/images/Frame 612.png",
-        name: "AK-900 Wired Keyboard",
-        price: "$960",
-        oldPrice: "$1160",
-        reviews: "(75)",
-        cart: true,
-    },
-    {
-        discount: "-30%",
-        image: "/images/Frame 613.png",
-        name: "IPS LCD Gaming Monitor",
-        price: "$370",
-        oldPrice: "$400",
-        reviews: "(99)",
-    },
-    {
-        discount: "-25%",
-        image: "/images/Frame 614.png",
-        name: "S-Series Comfort Chair",
-        price: "$375",
-        oldPrice: "$400",
-        reviews: "(99)",
-    },
-    {
-        discount: "-25%",
-        image: "/images/Frame 614.png",
-        name: "S-Series Comfort Chair",
-        price: "$375",
-        oldPrice: "$400",
-        reviews: "(99)",
-    },
-    {
-        discount: "-25%",
-        image: "/images/Frame 613.png",
-        name: "S-Series Comfort ",
-        price: "$375",
-        oldPrice: "$400",
-        reviews: "(99)",
-    },
-];
+import { useEffect, useRef, useState } from "react";
+
 const allproduct = [
     {
         image: "/images/Frame 605.png",
@@ -183,7 +133,79 @@ export default function FlashSales() {
     };
     const [selectedCategory, setSelectedCategory] = useState(4);
     const [itemsData, setItemsData] = useState(exploreproducts);
+    const [products, setProducts] = useState([]);
+    const flashProducts = products.filter((p) => p.isFlashSale);
+    const bestSellingProducts = products.filter((p) => p.isBestSelling);
+    const featuredProducts = products.filter((p) => p.isFeatured);
+    useEffect(() => {
+        const getProducts = async () => {
+            const res = await fetch("/api/products");
+            const data = await res.json();
 
+            console.log("API DATA:", data);
+
+            setProducts(Array.isArray(data) ? data : []);
+        };
+
+        getProducts();
+    }, []);
+    const [saleEndTime, setSaleEndTime] = useState(null);
+    const [timeLeft, setTimeLeft] = useState({
+        days: "00",
+        hours: "00",
+        minutes: "00",
+        seconds: "00",
+    });
+    useEffect(() => {
+        const getSettings = async () => {
+            const res = await fetch("/api/settings");
+            const data = await res.json();
+
+            setSaleEndTime(data.flashSaleEndTime);
+        };
+
+        getSettings();
+    }, []);
+    useEffect(() => {
+        if (!saleEndTime) return;
+
+        const interval = setInterval(() => {
+            const now = new Date();
+            const end = new Date(saleEndTime);
+
+            const diff = end - now;
+
+            if (diff <= 0) {
+                clearInterval(interval);
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(
+                (diff % (1000 * 60 * 60 * 24)) /
+                (1000 * 60 * 60)
+            );
+
+            const minutes = Math.floor(
+                (diff % (1000 * 60 * 60)) /
+                (1000 * 60)
+            );
+
+            const seconds = Math.floor(
+                (diff % (1000 * 60)) /
+                1000
+            );
+
+            setTimeLeft({
+                days: String(days).padStart(2, "0"),
+                hours: String(hours).padStart(2, "0"),
+                minutes: String(minutes).padStart(2, "0"),
+                seconds: String(seconds).padStart(2, "0"),
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [saleEndTime]);
     return (
         <>
             <section className="w-full overflow-hidden bg-white py-[70px]">
@@ -203,14 +225,23 @@ export default function FlashSales() {
                                 </h2>
 
                                 <div className="flex items-end gap-[10px] overflow-x-auto md:gap-[17px]">
-                                    {["Days", "Hours", "Minutes", "Seconds"].map((label, i) => (
-                                        <div key={label} className="flex shrink-0 overflow-hidden items-end gap-[10px] md:gap-[17px]">
+                                    {[
+                                        { label: "Days", value: timeLeft.days },
+                                        { label: "Hours", value: timeLeft.hours },
+                                        { label: "Minutes", value: timeLeft.minutes },
+                                        { label: "Seconds", value: timeLeft.seconds },
+                                    ].map((item, i) => (
+                                        <div
+                                            key={item.label}
+                                            className="flex shrink-0 overflow-hidden items-end gap-[10px] md:gap-[17px]"
+                                        >
                                             <div>
                                                 <p className="poppins text-[12px] font-medium leading-[18px]">
-                                                    {label}
+                                                    {item.label}
                                                 </p>
+
                                                 <p className="inter text-[28px] font-bold leading-[30px] tracking-[0.04em] md:text-[32px]">
-                                                    {["03", "23", "19", "56"][i]}
+                                                    {item.value}
                                                 </p>
                                             </div>
 
@@ -251,11 +282,11 @@ export default function FlashSales() {
                         className="-mx-4 overflow-x-auto scroll-smooth px-4 pb-2 lg:mx-0 lg:w-[calc(100%+138px)] lg:px-0 [&::-webkit-scrollbar]:hidden"
                     >
                         <div className="flex h-[350px] w-max gap-[20px] xl:gap-[19px] md:gap-[30px]">
-                            {products.map((item, index) => (
-                                <div key={`${item.name}-${index}`} className="h-[350px] w-[270px] shrink-0">
+                            {flashProducts.map((product) => (
+                                <div key={product.id} className="h-[350px] w-[270px] shrink-0">
                                     <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
                                         <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] poppins text-[12px] text-white">
-                                            {item.discount}
+                                            {product.discountPercent}%
                                         </span>
 
                                         <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
@@ -270,8 +301,8 @@ export default function FlashSales() {
 
                                         <div className="absolute left-[40px] top-[35px] flex h-[180px] w-[190px] items-center justify-center">
                                             <img
-                                                src={item.image}
-                                                alt={item.name}
+                                                src={product.images?.[0]?.imageUrl || "/images/placeholder.png"}
+                                                alt={product.name}
                                                 className="h-[180px] w-[190px] object-contain"
                                             />
                                         </div>
@@ -282,18 +313,18 @@ export default function FlashSales() {
                                     </div>
 
                                     <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
-                                        {item.name}
+                                        {product.name}
                                     </h3>
 
                                     <div className="mt-[8px] flex gap-[12px] poppins text-[16px] font-medium leading-[24px]">
-                                        <span className="text-[#DB4444]">{item.price}</span>
-                                        <span className="text-black/50 line-through">{item.oldPrice}</span>
+                                        <span className="text-[#DB4444]">${product.basePrice}</span>
+                                        <span className="text-black/50 line-through">${product.oldPrice}</span>
                                     </div>
 
                                     <div className="mt-[8px] flex items-center gap-[8px]">
                                         <span className="text-[14px] text-[#FFAD33]">★★★★★</span>
                                         <span className="poppins text-[14px] font-semibold text-black/50">
-                                            {item.reviews}
+                                            {product.ratingCount}
                                         </span>
                                     </div>
                                 </div>
@@ -507,217 +538,216 @@ export default function FlashSales() {
                 </div>
             </section>
             <section className="w-full bg-white py-12 sm:py-16 lg:py-[70px]">
-  <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
-    <div className="mb-[40px] flex flex-col gap-6 md:mb-[60px] md:flex-row md:items-end md:justify-between">
-      <div>
-        <div className="mb-[20px] flex items-center gap-[16px]">
-          <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
-          <p className="poppins text-[16px] font-semibold leading-[20px] text-[#DB4444]">
-            Our Products
-          </p>
-        </div>
+                <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
+                    <div className="mb-[40px] flex flex-col gap-6 md:mb-[60px] md:flex-row md:items-end md:justify-between">
+                        <div>
+                            <div className="mb-[20px] flex items-center gap-[16px]">
+                                <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
+                                <p className="poppins text-[16px] font-semibold leading-[20px] text-[#DB4444]">
+                                    Our Products
+                                </p>
+                            </div>
 
-        <h2 className="inter text-[28px] font-semibold leading-[36px] tracking-[0.04em] text-black sm:text-[32px] sm:leading-[42px] md:text-[36px] md:leading-[48px]">
-          Explore Our Products
-        </h2>
-      </div>
+                            <h2 className="inter text-[28px] font-semibold leading-[36px] tracking-[0.04em] text-black sm:text-[32px] sm:leading-[42px] md:text-[36px] md:leading-[48px]">
+                                Explore Our Products
+                            </h2>
+                        </div>
 
-      <div className="hidden gap-[8px] md:flex">
-        <button className="flex h-[46px] w-[46px] cursor-pointer items-center justify-center rounded-full bg-[#F5F5F5] hover:opacity-85">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-          </svg>
-        </button>
+                        <div className="hidden gap-[8px] md:flex">
+                            <button className="flex h-[46px] w-[46px] cursor-pointer items-center justify-center rounded-full bg-[#F5F5F5] hover:opacity-85">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                                </svg>
+                            </button>
 
-        <button className="flex h-[46px] w-[46px] cursor-pointer items-center justify-center rounded-full bg-[#F5F5F5] hover:opacity-85">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-          </svg>
-        </button>
-      </div>
-    </div>
+                            <button className="flex h-[46px] w-[46px] cursor-pointer items-center justify-center rounded-full bg-[#F5F5F5] hover:opacity-85">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
 
-    <div className="grid grid-cols-1 justify-items-center gap-x-[30px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start lg:gap-y-[60px]">
-      {itemsData.map((item, index) => (
-        <div key={`${item.name}-${index}`} className="w-full max-w-[270px]">
-          <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-            {item.badge && (
-              <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#00FF66] px-[12px] py-[4px] poppins text-[12px] text-white">
-                {item.badge}
-              </span>
-            )}
+                    <div className="grid grid-cols-1 justify-items-center gap-x-[30px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start lg:gap-y-[60px]">
+                        {itemsData.map((item, index) => (
+                            <div key={`${item.name}-${index}`} className="w-full max-w-[270px]">
+                                <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
+                                    {item.badge && (
+                                        <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#00FF66] px-[12px] py-[4px] poppins text-[12px] text-white">
+                                            {item.badge}
+                                        </span>
+                                    )}
 
-            <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
-              <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg> </button>
+                                    <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
+                                        <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg> </button>
 
-              <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </button>
-            </div>
+                                        <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </button>
+                                    </div>
 
-            <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
-              <img
-                src={
-                  item.variants?.length
-                    ? item.variants[item.selectedColor || 0].image
-                    : item.image
-                }
-                alt={item.name}
-                className="h-[180px] w-[190px] object-contain"
-              />
-            </div>
+                                    <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
+                                        <img
+                                            src={
+                                                item.variants?.length
+                                                    ? item.variants[item.selectedColor || 0].image
+                                                    : item.image
+                                            }
+                                            alt={item.name}
+                                            className="h-[180px] w-[190px] object-contain"
+                                        />
+                                    </div>
 
-            <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
-              Add To Cart
-            </button>
-          </div>
+                                    <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+                                        Add To Cart
+                                    </button>
+                                </div>
 
-          <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
-            {item.name}
-          </h3>
+                                <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
+                                    {item.name}
+                                </h3>
 
-          <div className="mt-[8px] flex flex-wrap items-center gap-[8px] poppins text-[16px] font-medium leading-[24px]">
-            <span className="text-[#DB4444]">{item.price}</span>
-            <span className="text-[14px] text-[#FFAD33]">★★★★★</span>
-            <span className="poppins text-[14px] font-semibold text-black/50">
-              {item.reviews}
-            </span>
-          </div>
+                                <div className="mt-[8px] flex flex-wrap items-center gap-[8px] poppins text-[16px] font-medium leading-[24px]">
+                                    <span className="text-[#DB4444]">{item.price}</span>
+                                    <span className="text-[14px] text-[#FFAD33]">★★★★★</span>
+                                    <span className="poppins text-[14px] font-semibold text-black/50">
+                                        {item.reviews}
+                                    </span>
+                                </div>
 
-          {item.variants?.length > 0 && (
-            <div className="mt-[8px] flex gap-[8px]">
-              {item.variants.map((variant, colorIndex) => (
-                <button
-                  key={colorIndex}
-                  onClick={() => {
-                    const updated = [...itemsData];
-                    updated[index] = {
-                      ...updated[index],
-                      selectedColor: colorIndex,
-                    };
-                    setItemsData(updated);
-                  }}
-                  className={`flex h-[18px] w-[18px] cursor-pointer items-center justify-center rounded-full border hover:opacity-85 ${
-                    item.selectedColor === colorIndex
-                      ? "border-black"
-                      : "border-transparent"
-                  }`}
-                >
-                  <span
-                    className="h-[14px] w-[14px] rounded-full"
-                    style={{ backgroundColor: variant.color }}
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+                                {item.variants?.length > 0 && (
+                                    <div className="mt-[8px] flex gap-[8px]">
+                                        {item.variants.map((variant, colorIndex) => (
+                                            <button
+                                                key={colorIndex}
+                                                onClick={() => {
+                                                    const updated = [...itemsData];
+                                                    updated[index] = {
+                                                        ...updated[index],
+                                                        selectedColor: colorIndex,
+                                                    };
+                                                    setItemsData(updated);
+                                                }}
+                                                className={`flex h-[18px] w-[18px] cursor-pointer items-center justify-center rounded-full border hover:opacity-85 ${item.selectedColor === colorIndex
+                                                    ? "border-black"
+                                                    : "border-transparent"
+                                                    }`}
+                                            >
+                                                <span
+                                                    className="h-[14px] w-[14px] rounded-full"
+                                                    style={{ backgroundColor: variant.color }}
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
 
-    <div className="mt-[60px] flex justify-center">
-      <button className="h-[56px] w-[234px] cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85">
-        View All Products
-      </button>
-    </div>
-  </div>
-</section>
-           <section className="w-full bg-white py-12 sm:py-16 lg:py-[70px]">
-  <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
-    <div className="mb-[40px] flex items-end justify-between lg:mb-[60px]">
-      <div>
-        <div className="mb-[20px] flex items-center gap-[16px]">
-          <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
-          <p className="poppins text-[16px] font-semibold leading-[20px] text-[#DB4444]">
-            Featured
-          </p>
-        </div>
+                    <div className="mt-[60px] flex justify-center">
+                        <button className="h-[56px] w-[234px] cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85">
+                            View All Products
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <section className="w-full bg-white py-12 sm:py-16 lg:py-[70px]">
+                <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
+                    <div className="mb-[40px] flex items-end justify-between lg:mb-[60px]">
+                        <div>
+                            <div className="mb-[20px] flex items-center gap-[16px]">
+                                <span className="h-[40px] w-[20px] rounded-[4px] bg-[#DB4444]" />
+                                <p className="poppins text-[16px] font-semibold leading-[20px] text-[#DB4444]">
+                                    Featured
+                                </p>
+                            </div>
 
-        <h2 className="inter text-[28px] font-semibold leading-[36px] tracking-[0.04em] text-black sm:text-[32px] sm:leading-[42px] md:text-[36px] md:leading-[48px]">
-          New Arrival
-        </h2>
-      </div>
-    </div>
+                            <h2 className="inter text-[28px] font-semibold leading-[36px] tracking-[0.04em] text-black sm:text-[32px] sm:leading-[42px] md:text-[36px] md:leading-[48px]">
+                                New Arrival
+                            </h2>
+                        </div>
+                    </div>
 
-    <div className="grid grid-cols-1 gap-[30px] lg:grid-cols-2">
-      <div className="relative h-[420px] overflow-hidden rounded-[4px] bg-black sm:h-[520px] lg:h-[600px]">
-        <img
-          src="/images/one.png"
-          alt="PlayStation 5"
-          className="absolute bottom-0 left-0 h-full w-full object-cover"
-        />
+                    <div className="grid grid-cols-1 gap-[30px] lg:grid-cols-2">
+                        <div className="relative h-[420px] overflow-hidden rounded-[4px] bg-black sm:h-[520px] lg:h-[600px]">
+                            <img
+                                src="/images/one.png"
+                                alt="PlayStation 5"
+                                className="absolute bottom-0 left-0 h-full w-full object-cover"
+                            />
 
-        <div className="absolute bottom-[24px] left-[24px] text-white sm:bottom-[32px] sm:left-[32px]">
-          <h3 className="inter text-[24px] font-semibold leading-[24px]">
-            PlayStation 5
-          </h3>
-          <p className="mt-[16px] max-w-[242px] poppins text-[14px] leading-[21px]">
-            Black and White version of the PS5 coming out on sale.
-          </p>
-          <button className="mt-[16px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
-            Shop Now
-          </button>
-        </div>
-      </div>
+                            <div className="absolute bottom-[24px] left-[24px] text-white sm:bottom-[32px] sm:left-[32px]">
+                                <h3 className="inter text-[24px] font-semibold leading-[24px]">
+                                    PlayStation 5
+                                </h3>
+                                <p className="mt-[16px] max-w-[242px] poppins text-[14px] leading-[21px]">
+                                    Black and White version of the PS5 coming out on sale.
+                                </p>
+                                <button className="mt-[16px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
+                                    Shop Now
+                                </button>
+                            </div>
+                        </div>
 
-      <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2 lg:h-[600px]">
-        <div className="relative h-[284px] overflow-hidden rounded-[4px] bg-black sm:col-span-2">
-          <img
-            src="/images/tow.jpg"
-            alt="Women’s Collections"
-            className="absolute right-0 top-0 h-full max-h-[286px] w-full max-w-[432px] object-cover scale-x-[-1]"
-          />
+                        <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2 lg:h-[600px]">
+                            <div className="relative h-[284px] overflow-hidden rounded-[4px] bg-black sm:col-span-2">
+                                <img
+                                    src="/images/tow.jpg"
+                                    alt="Women’s Collections"
+                                    className="absolute right-0 top-0 h-full max-h-[286px] w-full max-w-[432px] object-cover scale-x-[-1]"
+                                />
 
-          <div className="absolute bottom-[24px] left-[24px] text-white">
-            <h3 className="inter text-[22px] font-semibold sm:text-[24px]">
-              Women’s Collections
-            </h3>
-            <p className="mt-[16px] max-w-[255px] poppins text-[14px] leading-[21px]">
-              Featured woman collections that give you another vibe.
-            </p>
-            <button className="mt-[16px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
-              Shop Now
-            </button>
-          </div>
-        </div>
+                                <div className="absolute bottom-[24px] left-[24px] text-white">
+                                    <h3 className="inter text-[22px] font-semibold sm:text-[24px]">
+                                        Women’s Collections
+                                    </h3>
+                                    <p className="mt-[16px] max-w-[255px] poppins text-[14px] leading-[21px]">
+                                        Featured woman collections that give you another vibe.
+                                    </p>
+                                    <button className="mt-[16px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
+                                        Shop Now
+                                    </button>
+                                </div>
+                            </div>
 
-        <div className="relative h-[284px] overflow-hidden rounded-[4px] bg-black">
-          <img
-            src="/images/four.png"
-            alt="Speakers"
-            className="absolute left-10 top-4 h-full w-full object-cover"
-          />
+                            <div className="relative h-[284px] overflow-hidden rounded-[4px] bg-black">
+                                <img
+                                    src="/images/four.png"
+                                    alt="Speakers"
+                                    className="absolute left-10 top-4 h-full w-full object-cover"
+                                />
 
-          <div className="absolute bottom-[24px] left-[24px] text-white">
-            <h3 className="inter text-[24px] font-semibold">Speakers</h3>
-            <p className="mt-[8px] poppins text-[14px] leading-[21px]">
-              Amazon wireless speakers
-            </p>
-            <button className="mt-[8px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
-              Shop Now
-            </button>
-          </div>
-        </div>
+                                <div className="absolute bottom-[24px] left-[24px] text-white">
+                                    <h3 className="inter text-[24px] font-semibold">Speakers</h3>
+                                    <p className="mt-[8px] poppins text-[14px] leading-[21px]">
+                                        Amazon wireless speakers
+                                    </p>
+                                    <button className="mt-[8px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
+                                        Shop Now
+                                    </button>
+                                </div>
+                            </div>
 
-        <div className="relative h-[286px] overflow-hidden rounded-[4px] bg-[#000000]">
-          <img
-            src="/images/three.png"
-            alt="Perfume"
-            className="absolute inset-0 left-0 top-0 h-full w-full"
-          />
+                            <div className="relative h-[286px] overflow-hidden rounded-[4px] bg-[#000000]">
+                                <img
+                                    src="/images/three.png"
+                                    alt="Perfume"
+                                    className="absolute inset-0 left-0 top-0 h-full w-full"
+                                />
 
-          <div className="absolute bottom-[24px] left-[24px] text-white">
-            <h3 className="inter text-[24px] font-semibold">Perfume</h3>
-            <p className="mt-[8px] poppins text-[14px] leading-[21px]">
-              GUCCI INTENSE OUD EDP
-            </p>
-            <button className="mt-[8px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
-              Shop Now
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+                                <div className="absolute bottom-[24px] left-[24px] text-white">
+                                    <h3 className="inter text-[24px] font-semibold">Perfume</h3>
+                                    <p className="mt-[8px] poppins text-[14px] leading-[21px]">
+                                        GUCCI INTENSE OUD EDP
+                                    </p>
+                                    <button className="mt-[8px] cursor-pointer border-b border-[#5D5D5D] poppins text-[16px] font-medium hover:opacity-85">
+                                        Shop Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <section className="w-full max-w-[1260px] mx-auto bg-white pb-8 pt-[80px]">
                 <div className="mx-auto max-w-[943px]">
                     <div className="flex flex-col items-center justify-between gap-10 md:flex-row">

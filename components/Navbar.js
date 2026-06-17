@@ -31,6 +31,7 @@ export default function Navbar() {
         await authClient.signOut();
         router.replace("/login");
     };
+    
     return (
         <nav className="w-full mx-auto max-w-[1440px] border-b border-black/30 bg-white">
             <div className="mx-auto flex min-h-[60px] w-full max-w-[1170px] items-center justify-between mt-6 gap-6 px-4 lg:px-0">
@@ -203,7 +204,7 @@ export default function Navbar() {
                                                 </span>
                                             </button>
 
-                                            <button onClick={handleLogout} className="flex items-center gap-[16px]">
+                                            <button onClick={handleLogout} className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
                                                 <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
                                                 </svg>

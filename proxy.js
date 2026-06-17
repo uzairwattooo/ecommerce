@@ -11,11 +11,15 @@ export function proxy(req) {
 
   const isAuthPage = authPages.includes(pathname);
 
+  // 1. logged in user login/signup nahi ja sakta
   if (token && isAuthPage) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  if (!token && !isAuthPage) {
+  // 2. allow all public pages (home, about, cart, checkout)
+  const publicRoutes = ["/", "/about", "/cart", "/checkout","/login", "/signup","/contact"];
+
+  if (!token && !publicRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

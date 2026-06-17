@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function AdminDashboard() {
     const stats = [
         { title: "Total Products", value: "120" },
@@ -19,9 +21,12 @@ export default function AdminDashboard() {
                         </h1>
                     </div>
 
-                    <button className="h-[56px] w-[180px] rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white">
+                    <Link
+                        href="/admin/products/add"
+                        className="flex h-[56px] w-[180px] items-center justify-center rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white"
+                    >
                         Add Product
-                    </button>
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2 lg:grid-cols-4">
