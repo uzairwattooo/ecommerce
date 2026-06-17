@@ -22,6 +22,13 @@
       "when": 1781690363483,
       "tag": "0002_sloppy_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781703919302,
+      "tag": "0003_gifted_old_lace",
+      "breakpoints": true
     }
   ]
 }

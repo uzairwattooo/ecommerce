@@ -8,49 +8,41 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
     const router = useRouter();
-
     const validate = () => {
         let newErrors = {};
-
         if (!email.trim()) {
             newErrors.email = "Email is required";
         }
-
         if (!password.trim()) {
             newErrors.password = "Password is required";
         }
-
         setErrors(newErrors);
-
         return Object.keys(newErrors).length === 0;
     };
-
     const handleLogin = async (e) => {
         e.preventDefault();
-
         if (!validate()) return;
-
         setLoading(true);
-
         const { error } = await authClient.signIn.email({
             email,
             password,
         });
-
         setLoading(false);
-
         if (error) {
             toast.error(error.message || "Login failed");
             return;
         }
-
+        const session = await authClient.getSession();
+        if (session?.data?.user?.role === "admin") {
+            router.push("/admin");
+        } else {
+            router.push("/");
+        }
         toast.success("Login successful");
-        router.push("/");
     };
     return (
         <section className="w-full mx-auto max-w-[1440px] bg-white pt-15 pb-[100px]">

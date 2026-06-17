@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function TopBar() {
     const [language, setLanguage] = useState("English");
     return (
-        <div className="h-[48px] w-full mx-auto hidden md:block max-w-[1440px] bg-black text-white">
+        <div className="h-[48px] w-full mx-auto hidden md:block bg-black text-white">
             <div className="relative mx-auto flex h-full max-w-[1440px] items-center justify-center px-4 poppins">
                 <p className="text-center text-[14px] font-normal leading-[21px] tracking-[0%]">
                     Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!{" "}

@@ -22,6 +22,7 @@ export async function POST(req) {
             isBestSelling: body.isBestSelling || false,
             isFeatured: body.isFeatured || false,
             saleEndTime: body.saleEndTime ? new Date(body.saleEndTime) : null,
+            badge: body.badge || null,
         });
 
         for (const color of body.colors || []) {

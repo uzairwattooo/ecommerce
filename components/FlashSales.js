@@ -3,38 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-const allproduct = [
-    {
-        image: "/images/Frame 605.png",
-        name: "HAVIT HV-G92 Gamepad",
-        price: "$120",
-        oldPrice: "$160",
-        reviews: "(88)",
-    },
-    {
-        image: "/images/Frame 606.png",
-        name: "AK-900 Wired Keyboard",
-        price: "$960",
-        oldPrice: "$1160",
-        reviews: "(75)",
-        cart: true,
-    },
-    {
-        image: "/images/Frame 610.png",
-        name: "IPS LCD Gaming Monitor",
-        price: "$370",
-        oldPrice: "$400",
-        reviews: "(99)",
-    },
-    {
-        image: "/images/Frame 612 (1).png",
-        name: "S-Series Comfort Chair",
-        price: "$375",
-        oldPrice: "$400",
-        reviews: "(99)",
-    }
 
-];
 const exploreproducts = [
     {
         name: "Breed Dry Dog Food",
@@ -137,6 +106,7 @@ export default function FlashSales() {
     const flashProducts = products.filter((p) => p.isFlashSale);
     const bestSellingProducts = products.filter((p) => p.isBestSelling);
     const featuredProducts = products.filter((p) => p.isFeatured);
+
     useEffect(() => {
         const getProducts = async () => {
             const res = await fetch("/api/products");
@@ -206,10 +176,20 @@ export default function FlashSales() {
 
         return () => clearInterval(interval);
     }, [saleEndTime]);
+    const changeColor = (productId, colorIndex) => {
+        setProducts((prev) =>
+            prev.map((item) =>
+                item.id === productId
+                    ? { ...item, selectedColor: colorIndex }
+                    : item
+            )
+        );
+    };
+
     return (
         <>
-            <section className="w-full overflow-hidden bg-white py-[70px]">
-                <div className="mx-auto max-w-[1170px] border-b border-[#ECECEC] px-4 py-20 lg:px-0">
+            <section className="w-full overflow-hidden border-b border-[#ECECEC] bg-white py-[40px]">
+                <div className="mx-auto max-w-[1170px] px-4 py-20 lg:px-0">
                     <div className="mb-[40px] flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                         <div>
                             <div className="mb-[24px] flex items-center gap-[16px]">
@@ -286,7 +266,7 @@ export default function FlashSales() {
                                 <div key={product.id} className="h-[350px] w-[270px] shrink-0">
                                     <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
                                         <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] poppins text-[12px] text-white">
-                                            {product.discountPercent}%
+                                            -{product.discountPercent}%
                                         </span>
 
                                         <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
@@ -322,7 +302,7 @@ export default function FlashSales() {
                                     </div>
 
                                     <div className="mt-[8px] flex items-center gap-[8px]">
-                                        <span className="text-[14px] text-[#FFAD33]">★★★★★</span>
+                                        <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
                                         <span className="poppins text-[14px] font-semibold text-black/50">
                                             {product.ratingCount}
                                         </span>
@@ -339,7 +319,7 @@ export default function FlashSales() {
                     </div>
                 </div>
             </section>
-            <section className="mx-auto w-full max-w-[1440px] overflow-hidden bg-white pb-12 border-b border-[#ECECEC] sm:pb-16 lg:pb-20">
+            <section className="mx-auto w-full mt-20 overflow-hidden bg-white pb-12 border-b border-[#ECECEC] sm:pb-16 lg:pb-20">
                 <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
                     <div className="mb-[40px] flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                         <div>
@@ -406,7 +386,7 @@ export default function FlashSales() {
                     </div>
                 </div>
             </section>
-            <section className="mx-auto w-full max-w-[1440px] overflow-hidden border-b border-[#ECECEC] bg-white py-12 sm:py-16 lg:py-20">
+            <section className="mx-auto w-full overflow-hidden border-b border-[#ECECEC] bg-white py-12 sm:py-16 lg:py-20">
                 <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
                     <div className="mb-[40px] flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                         <div>
@@ -432,9 +412,9 @@ export default function FlashSales() {
                     </div>
 
                     <div className="grid grid-cols-1 justify-items-center gap-[30px] sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start">
-                        {allproduct.map((item, index) => (
+                        {bestSellingProducts.map((product) => (
                             <div
-                                key={`${item.name}-${index}`}
+                                key={product.id}
                                 className="w-full max-w-[270px]"
                             >
                                 <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
@@ -450,8 +430,8 @@ export default function FlashSales() {
 
                                     <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
                                         <img
-                                            src={item.image}
-                                            alt={item.name}
+                                            src={product.images?.[0]?.imageUrl || "/images/placeholder.png"}
+                                            alt={product.name}
                                             className="h-[180px] w-[190px] object-contain"
                                         />
                                     </div>
@@ -462,18 +442,18 @@ export default function FlashSales() {
                                 </div>
 
                                 <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
-                                    {item.name}
+                                    {product.name}
                                 </h3>
 
                                 <div className="mt-[8px] flex gap-[12px] poppins text-[16px] font-medium leading-[24px]">
-                                    <span className="text-[#DB4444]">{item.price}</span>
-                                    <span className="text-black/50 line-through">{item.oldPrice}</span>
+                                    <span className="text-[#DB4444]">{product.basePrice}</span>
+                                    <span className="text-black/50 line-through">{product.oldPrice}</span>
                                 </div>
 
                                 <div className="mt-[8px] flex items-center gap-[8px]">
-                                    <span className="text-[14px] text-[#FFAD33]">★★★★★</span>
+                                    <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
                                     <span className="poppins text-[14px] font-semibold text-black/50">
-                                        {item.reviews}
+                                        {product.ratingCount}
                                     </span>
                                 </div>
                             </div>
@@ -487,7 +467,7 @@ export default function FlashSales() {
                     </div>
                 </div>
             </section>
-            <section className="w-full bg-white py-12 sm:py-16 lg:py-[70px]">
+            <section className="w-full bg-black py-12 sm:py-16 lg:py-[70px]">
                 <div className="mx-auto flex max-w-[1170px] flex-col-reverse items-center justify-between gap-10 bg-black px-6 py-10 sm:px-10 lg:min-h-[500px] lg:flex-row lg:px-[56px] lg:py-[37px]">
 
                     {/* Content */}
@@ -569,78 +549,76 @@ export default function FlashSales() {
                     </div>
 
                     <div className="grid grid-cols-1 justify-items-center gap-x-[30px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start lg:gap-y-[60px]">
-                        {itemsData.map((item, index) => (
-                            <div key={`${item.name}-${index}`} className="w-full max-w-[270px]">
-                                <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-                                    {item.badge && (
-                                        <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#00FF66] px-[12px] py-[4px] poppins text-[12px] text-white">
-                                            {item.badge}
+                        {featuredProducts.map((product) => {
+                            const isNew =
+                                Date.now() - new Date(product.createdAt).getTime() <
+                                7 * 24 * 60 * 60 * 1000;
+
+                            return (
+                                <div key={product.id} className="w-full max-w-[270px]">
+                                    <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
+                                        {product.discount && (
+                                            <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#00FF66] px-[12px] py-[4px] poppins text-[12px] text-white">
+                                                {product.discount}
+                                            </span>
+                                        )}
+
+                                        {isNew && (
+                                            <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#00C853] px-[12px] py-[4px] text-[12px] text-white">
+                                                NEW
+                                            </span>
+                                        )}
+
+                                        <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
+                                            <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg> </button>
+
+                                            <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </button>
+                                        </div>
+
+                                        <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
+                                            <img
+                                                src={
+                                                    product.variants?.length
+                                                        ? product.variants[product.selectedColor || 0]?.imageUrl
+                                                        : product.images?.[0]?.imageUrl
+                                                }
+                                                alt={product.name}
+                                                className="h-[180px] w-[190px] object-contain"
+                                            />
+                                        </div>
+
+                                        <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+                                            Add To Cart
+                                        </button>
+                                    </div>
+
+                                    <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
+                                        {product.name}
+                                    </h3>
+
+                                    <div className="mt-[8px] flex flex-wrap items-center gap-[8px] poppins text-[16px] font-medium leading-[24px]">
+                                        <span className="text-[#DB4444]">{product.basePrice}</span>
+                                        <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
+                                        <span className="poppins text-[14px] font-semibold text-black/50">
+                                            {product.ratingCount}
                                         </span>
-                                    )}
-
-                                    <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
-                                        <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg> </button>
-
-                                        <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </button>
                                     </div>
 
-                                    <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
-                                        <img
-                                            src={
-                                                item.variants?.length
-                                                    ? item.variants[item.selectedColor || 0].image
-                                                    : item.image
-                                            }
-                                            alt={item.name}
-                                            className="h-[180px] w-[190px] object-contain"
-                                        />
-                                    </div>
-
-                                    <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
-                                        Add To Cart
-                                    </button>
-                                </div>
-
-                                <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
-                                    {item.name}
-                                </h3>
-
-                                <div className="mt-[8px] flex flex-wrap items-center gap-[8px] poppins text-[16px] font-medium leading-[24px]">
-                                    <span className="text-[#DB4444]">{item.price}</span>
-                                    <span className="text-[14px] text-[#FFAD33]">★★★★★</span>
-                                    <span className="poppins text-[14px] font-semibold text-black/50">
-                                        {item.reviews}
-                                    </span>
-                                </div>
-
-                                {item.variants?.length > 0 && (
-                                    <div className="mt-[8px] flex gap-[8px]">
-                                        {item.variants.map((variant, colorIndex) => (
-                                            <button
-                                                key={colorIndex}
-                                                onClick={() => {
-                                                    const updated = [...itemsData];
-                                                    updated[index] = {
-                                                        ...updated[index],
-                                                        selectedColor: colorIndex,
-                                                    };
-                                                    setItemsData(updated);
-                                                }}
-                                                className={`flex h-[18px] w-[18px] cursor-pointer items-center justify-center rounded-full border hover:opacity-85 ${item.selectedColor === colorIndex
-                                                    ? "border-black"
-                                                    : "border-transparent"
-                                                    }`}
-                                            >
-                                                <span
-                                                    className="h-[14px] w-[14px] rounded-full"
+                                    {product.variants?.length > 1 && (
+                                        <div className="flex gap-2 mt-2">
+                                            {product.variants?.map((variant, index) => (
+                                                <button
+                                                    key={variant.id}
+                                                    onClick={() => changeColor(product.id, index)}
+                                                    className="h-5 w-5 rounded-full border"
                                                     style={{ backgroundColor: variant.color }}
                                                 />
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
 
                     <div className="mt-[60px] flex justify-center">

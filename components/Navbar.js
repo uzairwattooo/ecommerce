@@ -33,7 +33,7 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="w-full mx-auto max-w-[1440px] border-b border-black/30 bg-white">
+        <nav className="w-full mx-auto  border-b border-black/30 bg-white">
             <div className="mx-auto flex min-h-[60px] w-full max-w-[1170px] items-center justify-between mt-6 gap-6 px-4 lg:px-0">
                 <h1 className="inter text-[24px] font-bold leading-[24px] tracking-[0.03em] text-black">
                     Exclusive

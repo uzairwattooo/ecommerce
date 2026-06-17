@@ -201,12 +201,12 @@ export default function AddProductPage() {
                         )}
 
                         <label className="flex items-center gap-2">
-                            <input type="checkbox" name="isBestSelling" checked={formData.isBestSelling} onChange={handleChange} />
+                            <input type="checkbox" name="isBestSelling" value={formData.isBestSelling} onChange={handleChange} />
                             Best Selling
                         </label>
 
                         <label className="flex items-center gap-2">
-                            <input type="checkbox" name="isFeatured" checked={formData.isFeatured} onChange={handleChange} />
+                            <input type="checkbox" name="isFeatured" value={formData.isFeatured} onChange={handleChange} />
                             Featured / Explore
                         </label>
                     </div>

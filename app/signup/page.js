@@ -49,19 +49,30 @@ export default function SignUp() {
         const sec = time % 60;
         return `${min}:${String(sec).padStart(2, "0")}`;
     };
+
     const handleSignup = async (e) => {
         e.preventDefault();
         if (!validateStep1()) return;
+
         setLoading(true);
-        const normalizedEmail = email.trim().toLowerCase();
-        const { error } = await authClient.signUp.email({
-            name: name.trim(),
-            email: normalizedEmail,
-            password,
+
+        const res = await fetch("/api/auth/send-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: name.trim(),
+                email: email.trim().toLowerCase(),
+                password,
+            }),
         });
+
+        const text = await res.text();
+        const data = text ? JSON.parse(text) : {};
+
         setLoading(false);
-        if (error) {
-            toast.error(error.message || "Signup failed");
+
+        if (!res.ok) {
+            toast.error(data.error || "OTP send failed");
             return;
         }
         toast.success("OTP email par send ho gaya");
@@ -71,25 +82,56 @@ export default function SignUp() {
     const verifyOtp = async (e) => {
         e.preventDefault();
         if (!validateOtp()) return;
+
         setLoading(true);
-        const { error } = await authClient.emailOtp.verifyEmail({
-            email: email.trim().toLowerCase(),
-            otp,
-        });
-        const session = await authClient.getSession();
-        if (!session?.data?.user) {
-            await authClient.signIn.email({
-                email,
+
+        const res = await fetch("/api/auth/verify-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: email.trim().toLowerCase(),
+                otp,
+                name: name.trim(),
                 password,
-            });
-        }
-        setLoading(false);
-        if (error) {
-            toast.error(error.message || "Invalid OTP");
+            }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            setLoading(false);
+            toast.error(data.error || "Invalid OTP");
             return;
         }
-        toast.success("Email verified successfully");
-        router.push("/");
+
+        const loginRes = await authClient.signIn.email({
+            email: email.trim().toLowerCase(),
+            password,
+        });
+
+        console.log("LOGIN RES:", loginRes);
+
+        if (loginRes?.error) {
+            setLoading(false);
+            toast.error(loginRes.error.message || "Login failed after signup");
+            return;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const session = await authClient.getSession();
+        console.log("SESSION AFTER LOGIN:", session);
+
+        setLoading(false);
+
+        if (!session?.data?.user) {
+            toast.error("Session create nahi hua");
+            return;
+        }
+
+        console.log("LOGIN RES:", loginRes);
+        toast.success("Account created successfully");
+        router.replace("/");
     };
     return (
         <section className="w-full mx-auto max-w-[1440px] bg-white pt-15 pb-[100px]">
@@ -238,7 +280,7 @@ export default function SignUp() {
                                 {seconds === 0 && (
                                     <button
                                         type="button"
-                                        onClick={sendSignupOtp}
+                                        onClick={handleSignup}
                                         className="mt-[16px] poppins text-[14px] text-[#DB4444]"
                                     >
                                         Resend OTP
