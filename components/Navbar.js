@@ -31,7 +31,7 @@ export default function Navbar() {
         await authClient.signOut();
         router.replace("/login");
     };
-    
+
     return (
         <nav className="w-full mx-auto max-w-[1440px] border-b border-black/30 bg-white">
             <div className="mx-auto flex min-h-[60px] w-full max-w-[1170px] items-center justify-between mt-6 gap-6 px-4 lg:px-0">
@@ -232,43 +232,51 @@ export default function Navbar() {
                 </div>
             </div>
             {open && (
-                <div className="border-t border-black/10 bg-white px-4 py-4 md:hidden">
-                    <ul className="flex flex-col gap-4 poppins">
-                        {navLinks.map((link) => (
-                            <li key={link.name}>
-                                <Link
-                                    href={link.href}
-                                    onClick={() => setOpen(false)}
-                                    className="block text-[16px] leading-[24px] text-black"
-                                >
-                                    {link.name}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
+                <>
 
-                    <div className="relative mt-4 h-[38px] w-full rounded-[4px] bg-[#F5F5F5]">
-                        <input
-                            type="text"
-                            placeholder="What are you looking for?"
-                            className="h-full w-full bg-transparent pl-[20px] pr-[44px] poppins text-[12px] outline-none"
-                        />
-
-                        <svg
-                            className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                        >
-                            <circle cx="11" cy="11" r="7" stroke="black" strokeWidth="2" />
-                            <path
-                                d="M16.5 16.5L21 21"
-                                stroke="black"
-                                strokeWidth="2"
-                                strokeLinecap="round"
+                    <div className="border-t border-black/10 bg-white px-4 py-4 md:hidden">
+                        <ul className="flex flex-col gap-4 poppins">
+                            {navLinks.map((link) => (
+                                <li key={link.name}>
+                                    <Link
+                                        href={link.href}
+                                        onClick={() => setOpen(false)}
+                                        className="block text-[16px] leading-[24px] text-black"
+                                    >
+                                        {link.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                        <button onClick={handleLogout} className="flex items-center gap-[16px] mt-4 cursor-pointer hover:opacity-85">
+                            <span className="poppins text-[18px] leading-[21px]">
+                                Logout
+                            </span>
+                        </button>
+                        <div className="relative mt-4 h-[38px] w-full rounded-[4px] bg-[#F5F5F5]">
+                            <input
+                                type="text"
+                                placeholder="What are you looking for?"
+                                className="h-full w-full bg-transparent pl-[20px] pr-[44px] poppins text-[12px] outline-none"
                             />
-                        </svg>
+
+                            <svg
+                                className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                            >
+                                <circle cx="11" cy="11" r="7" stroke="black" strokeWidth="2" />
+                                <path
+                                    d="M16.5 16.5L21 21"
+                                    stroke="black"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                />
+                            </svg>
+                        </div>
                     </div>
-                </div>
+
+                </>
             )}
         </nav >
     );
