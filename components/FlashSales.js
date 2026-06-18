@@ -2,76 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useCartStore } from "../store/cartStore";
 
 
-const exploreproducts = [
-    {
-        name: "Breed Dry Dog Food",
-        image: "/images/Frame 604.png",
-        price: "$100",
-        reviews: "(35)",
-    },
-    {
-        name: "CANON EOS DSLR Camera",
-        image: "/images/Frame 604 (1).png",
-        price: "$360",
-        reviews: "(95)",
-    },
-    {
-        name: "ASUS FHD Gaming Laptop",
-        image: "/images/Frame 604 (2).png",
-        price: "$700",
-        reviews: "(325)",
-    },
-    {
-        name: "Curology Product Set",
-        image: "/images/curology.png",
-        price: "$500",
-        reviews: "(145)",
-    },
-    {
-        name: "Kids Electric Car",
-        price: "$960",
-        reviews: "(65)",
-        badge: "NEW",
-        selectedColor: 0,
-        variants: [
-            { color: "#FB1314", image: "/images/Frame 608.png" },
-            { color: "#DB4444", image: "/images/Car.png" },
-        ],
-    },
-    {
-        name: "Jr. Zoom Soccer Cleats",
-        price: "$1160",
-        reviews: "(35)",
-        selectedColor: 0,
-        variants: [
-            { color: "#EEFF61", image: "/images/Frame 608 (1).png" },
-            { color: "#DB4444", image: "/images/shoes.png" },
-        ],
-    },
-    {
-        name: "GP11 Shooter USB Gamepad",
-        price: "$660",
-        reviews: "(55)",
-        badge: "NEW",
-        selectedColor: 0,
-        variants: [
-            { color: "#000000", image: "/images/Frame 608 (2).png" },
-            { color: "#DB4444", image: "/images/Frame 611.png" },
-        ],
-    },
-    {
-        name: "Quilted Satin Jacket",
-        price: "$660",
-        reviews: "(55)",
-        selectedColor: 0,
-        variants: [
-            { color: "#184A48", image: "/images/Frame 608 (3).png" },
-            { color: "#DB4444", image: "/images/Frame 605.png" },
-        ],
-    },
-];
+
 const categories = [
     { id: 1, name: "Phones", icon: "/icons/Category-CellPhone.svg" },
     { id: 2, name: "Computers", icon: "/icons/Category-Computer.svg" },
@@ -101,7 +35,6 @@ export default function FlashSales() {
         });
     };
     const [selectedCategory, setSelectedCategory] = useState(4);
-    const [itemsData, setItemsData] = useState(exploreproducts);
     const [products, setProducts] = useState([]);
     const flashProducts = products.filter((p) => p.isFlashSale);
     const bestSellingProducts = products.filter((p) => p.isBestSelling);
@@ -185,7 +118,9 @@ export default function FlashSales() {
             )
         );
     };
-
+    const addToCart = useCartStore(
+        (state) => state.addToCart
+    );
     return (
         <>
             <section className="w-full overflow-hidden border-b border-[#ECECEC] bg-white py-[40px]">
@@ -287,7 +222,7 @@ export default function FlashSales() {
                                             />
                                         </div>
 
-                                        <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+                                        <button onClick={() => addToCart(product)} className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
                                             Add To Cart
                                         </button>
                                     </div>
@@ -436,7 +371,7 @@ export default function FlashSales() {
                                         />
                                     </div>
 
-                                    <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+                                    <button onClick={() => addToCart(product)} className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
                                         Add To Cart
                                     </button>
                                 </div>
@@ -587,7 +522,7 @@ export default function FlashSales() {
                                             />
                                         </div>
 
-                                        <button className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+                                        <button onClick={() => addToCart(product)} className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
                                             Add To Cart
                                         </button>
                                     </div>

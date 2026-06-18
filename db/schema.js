@@ -101,16 +101,27 @@ export const cart = pgTable("cart", {
    ========================= */
 export const orders = pgTable("orders", {
     id: text("id").primaryKey(),
-
     userId: text("user_id").notNull(),
+
+    firstName: text("first_name"),
+    companyName: text("company_name"),
+    streetAddress: text("street_address"),
+    apartment: text("apartment"),
+    city: text("city"),
+    phone: text("phone"),
+    email: text("email"),
+
+    subtotal: integer("subtotal"),
+    discount: integer("discount").default(0),
 
     totalPrice: integer("total_price").notNull(),
 
-    status: text("status").default("pending"), // pending, paid, shipped, cancelled
+    paymentMethod: text("payment_method"),
+
+    status: text("status").default("pending"),
 
     createdAt: timestamp("created_at").defaultNow(),
 });
-
 /* =========================
    ORDER ITEMS
    ========================= */
@@ -122,28 +133,32 @@ export const orderItems = pgTable("order_items", {
         .references(() => orders.id, { onDelete: "cascade" }),
 
     productId: text("product_id").notNull(),
-
     variantId: text("variant_id"),
 
-    quantity: integer("quantity").notNull(),
+    productName: text("product_name"),
+    image: text("image"),
 
+    quantity: integer("quantity").notNull(),
     price: integer("price").notNull(),
 });
 
-/* =========================
-   CATEGORIES
-   ========================= */
 export const categories = pgTable("categories", {
     id: text("id").primaryKey(),
-
     name: text("name").notNull(),
-
     icon: text("icon"),
-
     slug: text("slug").notNull(),
 });
 
 export const siteSettings = pgTable("site_settings", {
-  id: text("id").primaryKey(),
-  flashSaleEndTime: timestamp("flash_sale_end_time"),
+    id: text("id").primaryKey(),
+    flashSaleEndTime: timestamp("flash_sale_end_time"),
+});
+
+export const coupons = pgTable("coupons", {
+    id: text("id").primaryKey(),
+    code: text("code").notNull().unique(),
+    discountPercent: integer("discount_percent").notNull(),
+    isActive: boolean("is_active").default(true),
+    expiresAt: timestamp("expires_at"),
+    createdAt: timestamp("created_at").defaultNow(),
 });

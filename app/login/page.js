@@ -38,9 +38,9 @@ export default function LoginPage() {
         }
         const session = await authClient.getSession();
         if (session?.data?.user?.role === "admin") {
-            router.push("/admin");
+            router.replace("/admin");
         } else {
-            router.push("/");
+            router.replace("/");
         }
         toast.success("Login successful");
     };

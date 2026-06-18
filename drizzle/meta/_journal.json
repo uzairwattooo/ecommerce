@@ -29,6 +29,13 @@
       "when": 1781703919302,
       "tag": "0003_gifted_old_lace",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1781771889635,
+      "tag": "0004_silky_killraven",
+      "breakpoints": true
     }
   ]
 }
