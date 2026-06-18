@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useCartStore } from "../../store/cartStore";
-import { useState } from "react";
 import { toast } from "sonner";
 
 
 export default function Cart() {
-  const [couponCode, setCouponCode] = useState("");
-  const [discount, setDiscount] = useState(0);
+  const couponCode = useCartStore((state) => state.couponCode);
+  const discount = useCartStore((state) => state.discount);
+  const couponApplied = useCartStore((state) => state.couponApplied);
+  const setCouponCode = useCartStore((state) => state.setCouponCode);
+  const setCoupon = useCartStore((state) => state.setCoupon);
   const cartItems = useCartStore(
     (state) => state.cart
   );
@@ -31,6 +33,16 @@ export default function Cart() {
     updateQuantity(id, Number(qty));
   };
   const applyCoupon = async () => {
+    if (couponApplied) {
+      toast.error("Coupon already applied");
+      return;
+    }
+
+    if (!couponCode.trim()) {
+      toast.error("Please enter coupon code");
+      return;
+    }
+
     const res = await fetch("/api/coupons/validate", {
       method: "POST",
       headers: {
@@ -44,10 +56,11 @@ export default function Cart() {
     const data = await res.json();
 
     if (!res.ok) {
-      toast.error("Invalid Coupon");
+      toast.error(data.error || "Invalid Coupon");
       return;
     }
-    setDiscount(data.discountPercent);
+
+    setCoupon(couponCode, data.discountPercent);
     toast.success("Coupon Applied");
   };
   const discountAmount =
@@ -144,11 +157,16 @@ export default function Cart() {
               value={couponCode}
               onChange={(e) => setCouponCode(e.target.value)}
               placeholder="Coupon Code"
-              className="h-[56px] w-full rounded-[4px] border border-black/50 px-[24px] poppins text-[16px] outline-none sm:w-[300px]"
+              disabled={couponApplied}
+              className="h-[56px] w-full rounded-[4px] border border-black/50 px-[24px] poppins text-[16px] outline-none disabled:opacity-60 sm:w-[300px]"
             />
 
-            <button onClick={applyCoupon} className="h-[56px] w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 sm:w-[211px]">
-              Apply Coupon
+            <button
+              onClick={applyCoupon}
+              disabled={couponApplied}
+              className="h-[56px] w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 disabled:opacity-60 sm:w-[211px]"
+            >
+              {couponApplied ? "Applied" : "Apply Coupon"}
             </button>
           </div>
 

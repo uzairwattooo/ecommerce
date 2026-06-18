@@ -10,10 +10,8 @@ export default function Checkout() {
 
   const cartItems = useCartStore((state) => state.cart);
   const clearCart = useCartStore((state) => state.clearCart);
-  const [couponCode, setCouponCode] = useState("");
-  const [discount, setDiscount] = useState(0);
-  const [couponApplied, setCouponApplied] = useState(false);
 
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -26,7 +24,28 @@ export default function Checkout() {
     email: "",
     paymentMethod: "cash",
   });
+  const couponCode = useCartStore(
+    (state) => state.couponCode
+  );
 
+  const discount = useCartStore(
+    (state) => state.discount
+  );
+
+  const couponApplied = useCartStore(
+    (state) => state.couponApplied
+  );
+
+  const setCouponCode = useCartStore(
+    (state) => state.setCouponCode
+  );
+
+  const setCoupon = useCartStore(
+    (state) => state.setCoupon
+  );
+  const clearCoupon = useCartStore(
+    (state) => state.clearCoupon
+  );
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -36,7 +55,8 @@ export default function Checkout() {
   };
 
   const placeOrder = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
+    if (!validate()) return;
 
     if (cartItems.length === 0) {
       toast.error("Cart is empty");
@@ -87,12 +107,18 @@ export default function Checkout() {
     }
 
     clearCart();
+    clearCoupon();
     toast.success("Order placed successfully");
     router.push(`/order-success?orderId=${data.orderId}`);
   };
   const applyCoupon = async () => {
     if (couponApplied) {
       toast.error("Coupon already applied");
+      return;
+    }
+
+    if (!couponCode.trim()) {
+      toast.error("Please enter coupon code");
       return;
     }
 
@@ -113,9 +139,7 @@ export default function Checkout() {
       return;
     }
 
-    setDiscount(data.discountPercent);
-    setCouponApplied(true);
-
+    setCoupon(couponCode, data.discountPercent);
     toast.success("Coupon Applied");
   };
   const discountAmount =
@@ -123,6 +147,36 @@ export default function Checkout() {
 
   const total =
     subtotal - discountAmount;
+
+  const validate = () => {
+    let newErrors = {};
+
+    if (!form.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+
+    if (!form.streetAddress.trim()) {
+      newErrors.streetAddress = "Street address is required";
+    }
+
+    if (!form.city.trim()) {
+      newErrors.city = "City is required";
+    }
+
+    if (!form.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    }
+
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+      newErrors.email = "Invalid email address";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
   return (
     <main className="w-full bg-white py-12 sm:py-16 lg:py-[80px]">
       <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
@@ -143,7 +197,7 @@ export default function Checkout() {
               Billing Details
             </h1>
 
-            <form onSubmit={placeOrder} className="mt-[36px] space-y-[24px] lg:mt-[48px]">
+            <form className="mt-[36px] space-y-[24px] lg:mt-[48px]">
               {[
                 { label: "First Name*", name: "firstName" },
                 { label: "Company Name", name: "companyName" },
@@ -157,12 +211,22 @@ export default function Checkout() {
                   <span className="poppins text-[16px] font-normal leading-[24px] text-black/40">
                     {field.label}
                   </span>
+
                   <input
                     name={field.name}
                     value={form[field.name]}
                     onChange={handleChange}
-                    className="mt-[8px] h-[50px] w-full rounded-[4px] bg-[#F5F5F5] px-4 outline-none"
+                    className={`mt-[8px] h-[50px] w-full rounded-[4px] bg-[#F5F5F5] px-4 outline-none ${errors[field.name]
+                      ? "border border-red-500"
+                      : ""
+                      }`}
                   />
+
+                  {errors[field.name] && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors[field.name]}
+                    </p>
+                  )}
                 </label>
               ))}
 

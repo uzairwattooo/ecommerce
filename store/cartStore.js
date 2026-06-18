@@ -5,7 +5,28 @@ export const useCartStore = create(
     persist(
         (set) => ({
             cart: [],
+            couponCode: "",
+            discount: 0,
+            couponApplied: false,
 
+            setCouponCode: (code) =>
+                set({
+                    couponCode: code,
+                }),
+
+            setCoupon: (code, discount) =>
+                set({
+                    couponCode: code,
+                    discount,
+                    couponApplied: true,
+                }),
+
+            clearCoupon: () =>
+                set({
+                    couponCode: "",
+                    discount: 0,
+                    couponApplied: false,
+                }),
             addToCart: (product) =>
                 set((state) => {
                     const existing = state.cart.find(
