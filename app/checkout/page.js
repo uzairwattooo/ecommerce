@@ -116,12 +116,10 @@ export default function Checkout() {
       toast.error("Coupon already applied");
       return;
     }
-
     if (!couponCode.trim()) {
       toast.error("Please enter coupon code");
       return;
     }
-
     const res = await fetch("/api/coupons/validate", {
       method: "POST",
       headers: {

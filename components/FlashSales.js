@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useCartStore } from "../store/cartStore";
-
+import { useWishlistStore } from "../store/wishlistStore";
 
 
 const categories = [
@@ -121,6 +121,8 @@ export default function FlashSales() {
     const addToCart = useCartStore(
         (state) => state.addToCart
     );
+    const wishlist = useWishlistStore((state) => state.wishlist);
+    const toggleWishlist = useWishlistStore((state) => state.toggleWishlist);
     return (
         <>
             <section className="w-full overflow-hidden border-b border-[#ECECEC] bg-white py-[40px]">
@@ -197,53 +199,73 @@ export default function FlashSales() {
                         className="-mx-4 overflow-x-auto scroll-smooth px-4 pb-2 lg:mx-0 lg:w-[calc(100%+138px)] lg:px-0 [&::-webkit-scrollbar]:hidden"
                     >
                         <div className="flex h-[350px] w-max gap-[20px] xl:gap-[19px] md:gap-[30px]">
-                            {flashProducts.map((product) => (
-                                <div key={product.id} className="h-[350px] w-[270px] shrink-0">
-                                    <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-                                        <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] poppins text-[12px] text-white">
-                                            -{product.discountPercent}%
-                                        </span>
+                            {products.map((product) => {
+                                const isFavourite = wishlist.some(
+                                    (item) => item.id === product.id
+                                );
 
-                                        <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
-                                            <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg>
-                                            </button>
+                                return (
+                                    <div key={product.id} className="h-[350px] w-[270px] shrink-0">
+                                        <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
+                                            <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] poppins text-[12px] text-white">
+                                                -{product.discountPercent}%
+                                            </span>
 
-                                            <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg>
+                                            <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
+                                                <button onClick={() => toggleWishlist(product)} className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill={isFavourite ? "#DB4444" : "none"}
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth="1.5"
+                                                        stroke={isFavourite ? "#DB4444" : "currentColor"}
+                                                        className="size-6"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                                                        />
+                                                    </svg>
+                                                </button>
+
+                                                <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg>
+                                                </button>
+                                            </div>
+
+                                            <div className="absolute left-[40px] top-[35px] flex h-[180px] w-[190px] items-center justify-center">
+                                                <img
+                                                    src={product.images?.[0]?.imageUrl || "/images/placeholder.png"}
+                                                    alt={product.name}
+                                                    className="h-[180px] w-[190px] object-contain"
+                                                />
+                                            </div>
+
+                                            <button onClick={() => addToCart(product)} className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+                                                Add To Cart
                                             </button>
                                         </div>
 
-                                        <div className="absolute left-[40px] top-[35px] flex h-[180px] w-[190px] items-center justify-center">
-                                            <img
-                                                src={product.images?.[0]?.imageUrl || "/images/placeholder.png"}
-                                                alt={product.name}
-                                                className="h-[180px] w-[190px] object-contain"
-                                            />
+                                        <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
+                                            {product.name}
+                                        </h3>
+
+                                        <div className="mt-[8px] flex gap-[12px] poppins text-[16px] font-medium leading-[24px]">
+                                            <span className="text-[#DB4444]">${product.basePrice}</span>
+                                            <span className="text-black/50 line-through">${product.oldPrice}</span>
                                         </div>
 
-                                        <button onClick={() => addToCart(product)} className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
-                                            Add To Cart
-                                        </button>
+                                        <div className="mt-[8px] flex items-center gap-[8px]">
+                                            <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
+                                            <span className="poppins text-[14px] font-semibold text-black/50">
+                                                {product.ratingCount}
+                                            </span>
+                                        </div>
                                     </div>
+                                );
+                            })}
 
-                                    <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
-                                        {product.name}
-                                    </h3>
-
-                                    <div className="mt-[8px] flex gap-[12px] poppins text-[16px] font-medium leading-[24px]">
-                                        <span className="text-[#DB4444]">${product.basePrice}</span>
-                                        <span className="text-black/50 line-through">${product.oldPrice}</span>
-                                    </div>
-
-                                    <div className="mt-[8px] flex items-center gap-[8px]">
-                                        <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
-                                        <span className="poppins text-[14px] font-semibold text-black/50">
-                                            {product.ratingCount}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
                         </div>
                     </div>
 
@@ -347,52 +369,71 @@ export default function FlashSales() {
                     </div>
 
                     <div className="grid grid-cols-1 justify-items-center gap-[30px] sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start">
-                        {bestSellingProducts.map((product) => (
-                            <div
-                                key={product.id}
-                                className="w-full max-w-[270px]"
-                            >
-                                <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-                                    <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
-                                        <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg>
-                                        </button>
+                        {bestSellingProducts.map((product) => {
+                            const isFavourite = wishlist.some(
+                                (item) => item.id === product.id
+                            );
+                            return (
+                                <div
+                                    key={product.id}
+                                    className="w-full max-w-[270px]"
+                                >
+                                    <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
+                                        <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
+                                            <button onClick={() => toggleWishlist(product)} className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill={isFavourite ? "#DB4444" : "none"}
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth="1.5"
+                                                    stroke={isFavourite ? "#DB4444" : "currentColor"}
+                                                    className="size-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                                                    />
+                                                </svg>
+                                            </button>
 
-                                        <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg>
+                                            <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg>
+                                            </button>
+                                        </div>
+
+                                        <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
+                                            <img
+                                                src={product.images?.[0]?.imageUrl || "/images/placeholder.png"}
+                                                alt={product.name}
+                                                className="h-[180px] w-[190px] object-contain"
+                                            />
+                                        </div>
+
+                                        <button onClick={() => addToCart(product)} className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
+                                            Add To Cart
                                         </button>
                                     </div>
 
-                                    <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
-                                        <img
-                                            src={product.images?.[0]?.imageUrl || "/images/placeholder.png"}
-                                            alt={product.name}
-                                            className="h-[180px] w-[190px] object-contain"
-                                        />
+                                    <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
+                                        {product.name}
+                                    </h3>
+
+                                    <div className="mt-[8px] flex gap-[12px] poppins text-[16px] font-medium leading-[24px]">
+                                        <span className="text-[#DB4444]">{product.basePrice}</span>
+                                        <span className="text-black/50 line-through">{product.oldPrice}</span>
                                     </div>
 
-                                    <button onClick={() => addToCart(product)} className="absolute bottom-0 left-0 h-[41px] w-full translate-y-full cursor-pointer bg-black poppins text-[12px] font-medium text-white transition duration-300 group-hover:translate-y-0">
-                                        Add To Cart
-                                    </button>
+                                    <div className="mt-[8px] flex items-center gap-[8px]">
+                                        <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
+                                        <span className="poppins text-[14px] font-semibold text-black/50">
+                                            {product.ratingCount}
+                                        </span>
+                                    </div>
                                 </div>
+                            );
+                        })}
 
-                                <h3 className="mt-[16px] poppins text-[16px] font-medium leading-[24px] text-black">
-                                    {product.name}
-                                </h3>
-
-                                <div className="mt-[8px] flex gap-[12px] poppins text-[16px] font-medium leading-[24px]">
-                                    <span className="text-[#DB4444]">{product.basePrice}</span>
-                                    <span className="text-black/50 line-through">{product.oldPrice}</span>
-                                </div>
-
-                                <div className="mt-[8px] flex items-center gap-[8px]">
-                                    <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
-                                    <span className="poppins text-[14px] font-semibold text-black/50">
-                                        {product.ratingCount}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
                     </div>
 
                     <div className="mt-[40px] flex justify-center md:hidden">
@@ -488,7 +529,9 @@ export default function FlashSales() {
                             const isNew =
                                 Date.now() - new Date(product.createdAt).getTime() <
                                 7 * 24 * 60 * 60 * 1000;
-
+                            const isFavourite = wishlist.some(
+                                (item) => item.id === product.id
+                            );
                             return (
                                 <div key={product.id} className="w-full max-w-[270px]">
                                     <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
@@ -505,7 +548,22 @@ export default function FlashSales() {
                                         )}
 
                                         <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
-                                            <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /> </svg> </button>
+                                            <button onClick={() => toggleWishlist(product)} className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill={isFavourite ? "#DB4444" : "none"}
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth="1.5"
+                                                    stroke={isFavourite ? "#DB4444" : "currentColor"}
+                                                    className="size-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                                                    />
+                                                </svg>
+                                            </button>
 
                                             <button className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </button>
                                         </div>
