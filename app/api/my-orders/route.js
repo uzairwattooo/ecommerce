@@ -13,7 +13,6 @@ export async function GET(req) {
     if (!session?.user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
 

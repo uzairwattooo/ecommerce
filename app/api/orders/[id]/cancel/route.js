@@ -4,19 +4,30 @@ import { auth } from "../../../../../lib/auth";
 import { headers } from "next/headers";
 import { eq, and } from "drizzle-orm";
 
-export async function PATCH(req, { params }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+export async function PATCH(req, context) {
+    try {
+        const { id } = await context.params;
 
-    if (!session?.user) {
-        return Response.json({ error: "Unauthorized" }, { status: 401 });
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+
+        if (!session?.user) {
+            return Response.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        await db
+            .update(orders)
+            .set({ status: "cancelled" })
+            .where(and(eq(orders.id, id), eq(orders.userId, session.user.id)));
+
+        return Response.json({ success: true });
+    } catch (error) {
+        console.log("CANCEL_ORDER_ERROR:", error);
+
+        return Response.json(
+            { error: error.message || "Order cancel failed" },
+            { status: 500 }
+        );
     }
-
-    await db
-        .update(orders)
-        .set({ status: "cancelled" })
-        .where(and(eq(orders.id, params.id), eq(orders.userId, session.user.id)));
-
-    return Response.json({ success: true });
 }

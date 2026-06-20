@@ -19,7 +19,7 @@ const poppins = Poppins({
 const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-lnter",
+  variable: "--font-inter",
 
 });
 export default function RootLayout({ children }) {
@@ -27,11 +27,13 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
     >
-      <body className={`${poppins.variable, inter.variable}  min-h-full flex flex-col`} cz-shortcut-listen="true">
+      <body className={`${poppins.variable} ${inter.variable} min-h-full flex flex-col`} cz-shortcut-listen="true">
         <TopBar />
         <Navbar />
-        
+        <div className="pt-[150px]">
+
         {children}
+        </div>
         <Toaster richColors position="top-right" />
         <Footer />
       </body>

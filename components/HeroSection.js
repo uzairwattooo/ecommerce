@@ -48,7 +48,6 @@ export default function HeroSection() {
     return (
         <section className="w-full bg-white">
             <div className="mx-auto flex w-full max-w-[1170px] gap-[45px] px-4 lg:px-0">
-                {/* Sidebar */}
                 <aside className="hidden w-[217px] shrink-0 border-r border-black/30 pt-[40px] md:block">
                     <ul className="space-y-[16px] pr-[16px] poppins text-[16px] font-normal text-black">
                         {categories.map((item, i) => (

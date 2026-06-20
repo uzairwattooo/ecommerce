@@ -19,6 +19,24 @@ export default function Account() {
         email: "",
         address: "",
     })
+
+    const [addressForm, setAddressForm] = useState({
+        firstName: "",
+        companyName: "",
+        streetAddress: "",
+        apartment: "",
+        city: "",
+        phone: "",
+        email: "",
+    });
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get("tab");
+
+        if (tab) {
+            setActiveTab(tab);
+        }
+    }, []);
     const saveProfile = async () => {
         const res = await fetch("/api/profile", {
             method: "PATCH",
@@ -50,6 +68,8 @@ export default function Account() {
     useEffect(() => {
         getProfile();
         getCancelledOrders();
+        getOrders();
+        getAddress();
     }, []);
     const handleChange = (e) => {
         setForm({
@@ -109,13 +129,69 @@ export default function Account() {
             await updatePassword();
         }
     };
-
     const getCancelledOrders = async () => {
         const res = await fetch("/api/my-orders?status=cancelled");
         const data = await res.json();
         setCancelledOrders(data.orders || []);
     };
+    const [orders, setOrders] = useState([]);
 
+    const getOrders = async () => {
+        const res = await fetch("/api/my-orders");
+        const data = await res.json();
+
+        setOrders(data.orders || []);
+    };
+
+    const cancelOrder = async (orderId) => {
+        const res = await fetch(`/api/orders/${orderId}/cancel`, {
+            method: "PATCH",
+        });
+
+        const text = await res.text();
+        const data = text ? JSON.parse(text) : {};
+
+        if (!res.ok) {
+            toast.error(data.error || "Order cancel failed");
+            return;
+        }
+
+        toast.success("Order cancelled");
+        getOrders();
+        getCancelledOrders();
+    };
+    const handleAddressChange = (e) => {
+        setAddressForm({
+            ...addressForm,
+            [e.target.name]: e.target.value,
+        });
+    };
+    const saveAddress = async () => {
+        const res = await fetch("/api/profile/address", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(addressForm),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            toast.error(data.error || "Failed to save address");
+            return;
+        }
+
+        toast.success("Address saved successfully");
+    };
+    const getAddress = async () => {
+        const res = await fetch("/api/profile/address");
+        const data = await res.json();
+
+        if (res.ok) {
+            setAddressForm(data.address);
+        }
+    };
     return (
         <>
             <section className="w-full bg-white py-12 sm:py-16 lg:py-[80px]">
@@ -176,6 +252,13 @@ export default function Account() {
                                 >
                                     My Returns
                                 </li>
+                                <li
+                                    onClick={() => setActiveTab("orders")}
+                                    className={`cursor-pointer ${activeTab === "returns" ? "text-[#DB4444]" : "text-black/50"
+                                        }`}
+                                >
+                                    My Orders
+                                </li>
 
                                 <li
                                     onClick={() => setActiveTab("cancellations")}
@@ -190,7 +273,7 @@ export default function Account() {
                                 My Wishlist
                             </h3>
                         </div>
-                        <div className="w-full rounded-[4px] border border-[#F0F0F0] bg-white p-5 shadow-[0_1px_13px_rgba(0,0,0,0.05)] sm:p-[30px] lg:w-[870px] lg:p-[40px]">
+                        <div autoComplete="off" className="w-full rounded-[4px] border border-[#F0F0F0] bg-white p-5 shadow-[0_1px_13px_rgba(0,0,0,0.05)] sm:p-[30px] lg:w-[870px] lg:p-[40px]">
                             {activeTab === "profile" && (
                                 <>
                                     <h2 className="mb-[24px] poppins text-[20px] font-medium text-[#DB4444]">
@@ -241,6 +324,7 @@ export default function Account() {
                                                 name="address"
                                                 value={form.address}
                                                 onChange={handleChange}
+                                                autoComplete="street-address"
                                                 className="h-[50px] w-full rounded-[4px] bg-[#F5F5F5] px-4 outline-none"
                                             />
                                         </div>
@@ -298,23 +382,84 @@ export default function Account() {
                                         Address Book
                                     </h2>
 
-                                    <label className="mb-[8px] block poppins text-[16px]">
-                                        Address
-                                    </label>
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 
-                                    <textarea
-                                        name="address"
-                                        value={form.address}
-                                        onChange={handleChange}
-                                        rows={3}
-                                        autoComplete="street-address"
+                                        <div>
+                                            <label className="mb-2 block">First Name</label>
+                                            <input
+                                                name="firstName"
+                                                value={addressForm.firstName}
+                                                onChange={handleAddressChange}
+                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
+                                            />
+                                        </div>
 
-                                        className="w-full rounded-[4px] bg-[#F5F5F5] p-4 outline-none"
-                                    />
+                                        <div>
+                                            <label className="mb-2 block">Company Name</label>
+                                            <input
+                                                name="companyName"
+                                                value={addressForm.companyName}
+                                                onChange={handleAddressChange}
+                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
+                                            />
+                                        </div>
+
+                                        <div className="md:col-span-2">
+                                            <label className="mb-2 block">Street Address</label>
+                                            <input
+                                                name="streetAddress"
+                                                value={addressForm.streetAddress}
+                                                onChange={handleAddressChange}
+                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
+                                            />
+                                        </div>
+
+                                        <div className="md:col-span-2">
+                                            <label className="mb-2 block">
+                                                Apartment, floor, etc. (optional)
+                                            </label>
+                                            <input
+                                                name="apartment"
+                                                value={addressForm.apartment}
+                                                onChange={handleAddressChange}
+                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="mb-2 block">Town / City</label>
+                                            <input
+                                                name="city"
+                                                value={addressForm.city}
+                                                onChange={handleAddressChange}
+                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="mb-2 block">Phone Number</label>
+                                            <input
+                                                name="phone"
+                                                value={addressForm.phone}
+                                                onChange={handleAddressChange}
+                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
+                                            />
+                                        </div>
+
+                                        <div className="md:col-span-2">
+                                            <label className="mb-2 block">Email Address</label>
+                                            <input
+                                                name="email"
+                                                value={addressForm.email}
+                                                onChange={handleAddressChange}
+                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
+                                            />
+                                        </div>
+                                    </div>
 
                                     <button
-                                        onClick={saveProfile}
-                                        className="mt-6 h-[56px] w-[180px] rounded-[4px] bg-[#DB4444] text-white"
+                                        onClick={saveAddress}
+                                        className="mt-6 h-[56px] w-[180px] rounded bg-[#DB4444] text-white"
                                     >
                                         Save Address
                                     </button>
@@ -340,6 +485,106 @@ export default function Account() {
                                     <p>No return requests found.</p>
                                 </>
                             )}
+                            {activeTab === "orders" && (
+                                <>
+                                    <h1 className="mb-[24px] poppins text-[20px] font-medium text-[#DB4444]">
+                                        My Orders
+                                    </h1>
+
+                                    {orders.length === 0 ? (
+                                        <p className="poppins text-black/50">
+                                            No orders found.
+                                        </p>
+                                    ) : (
+                                        <div className="overflow-x-auto rounded-[4px] border border-[#E5E5E5]">
+                                            <table className="w-full min-w-[800px]">
+                                                <thead>
+                                                    <tr className="bg-[#F5F5F5]">
+                                                        <th className="px-6 py-4 text-left poppins font-medium">
+                                                            Order ID
+                                                        </th>
+
+                                                        <th className="px-6 py-4 text-left poppins font-medium">
+                                                            Date
+                                                        </th>
+
+                                                        <th className="px-6 py-4 text-left poppins font-medium">
+                                                            Total
+                                                        </th>
+
+                                                        <th className="px-6 py-4 text-left poppins font-medium">
+                                                            Status
+                                                        </th>
+
+                                                        <th className="px-6 py-4 text-center poppins font-medium">
+                                                            Action
+                                                        </th>
+                                                        <th className="px-6 py-4 text-center poppins font-medium">
+                                                            Cancel
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    {orders.map((order) => (
+                                                        <tr
+                                                            key={order.id}
+                                                            className="border-t border-[#E5E5E5]"
+                                                        >
+                                                            <td className="px-6 py-5 poppins">
+                                                                #{order.id.slice(0, 8)}
+                                                            </td>
+
+                                                            <td className="px-6 py-5 poppins">
+                                                                {new Date(
+                                                                    order.createdAt
+                                                                ).toLocaleDateString()}
+                                                            </td>
+
+                                                            <td className="px-6 py-5 poppins">
+                                                                ${order.totalPrice}
+                                                            </td>
+
+                                                            <td className="px-6 py-5">
+                                                                <span
+                                                                    className={`rounded-full px-3 py-1 text-sm ${order.status === "pending"
+                                                                        ? "bg-yellow-100 text-yellow-700"
+                                                                        : order.status === "cancelled"
+                                                                            ? "bg-red-100 text-red-700"
+                                                                            : "bg-green-100 text-green-700"
+                                                                        }`}
+                                                                >
+                                                                    {order.status}
+                                                                </span>
+                                                            </td>
+
+                                                            <td className="px-6 py-5 text-center">
+                                                                <Link
+                                                                    href={`/account/orders/${order.id}`}
+                                                                    className="rounded bg-[#DB4444] px-4 py-2 text-white"
+                                                                >
+                                                                    View
+                                                                </Link>
+                                                            </td>
+                                                            <td>
+                                                                {order.status === "pending" && (
+                                                                    <button
+                                                                        onClick={() => cancelOrder(order.id)}
+                                                                        className="rounded bg-red-500 px-4 py-2 text-white cursor-pointer"
+                                                                    >
+                                                                        Cancel Order
+                                                                    </button>
+                                                                )}
+                                                            </td>
+
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                             {activeTab === "cancellations" && (
                                 <>
                                     <h2 className="mb-[24px] poppins text-[20px] font-medium text-[#DB4444]">
@@ -347,24 +592,82 @@ export default function Account() {
                                     </h2>
 
                                     {cancelledOrders.length === 0 ? (
-                                        <p>No cancelled orders found.</p>
+                                        <p className="poppins text-black/50">
+                                            No cancelled orders found.
+                                        </p>
                                     ) : (
-                                        <div className="space-y-4">
-                                            {cancelledOrders.map((order) => (
-                                                <div key={order.id} className="rounded bg-[#F5F5F5] p-4">
-                                                    <p className="font-medium">Order #{order.id}</p>
-                                                    <p>Total: ${order.totalPrice}</p>
-                                                    <p className="text-[#DB4444]">Cancelled</p>
-                                                </div>
-                                            ))}
+                                        <div className="overflow-x-auto rounded-[4px] border border-[#E5E5E5]">
+                                            <table className="w-full min-w-[800px]">
+                                                <thead>
+                                                    <tr className="bg-[#F5F5F5]">
+                                                        <th className="px-6 py-4 text-left poppins font-medium">
+                                                            Order ID
+                                                        </th>
+
+                                                        <th className="px-6 py-4 text-left poppins font-medium">
+                                                            Date
+                                                        </th>
+
+                                                        <th className="px-6 py-4 text-left poppins font-medium">
+                                                            Total
+                                                        </th>
+
+                                                        <th className="px-6 py-4 text-left poppins font-medium">
+                                                            Status
+                                                        </th>
+
+                                                        <th className="px-6 py-4 text-center poppins font-medium">
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    {cancelledOrders.map((order) => (
+                                                        <tr
+                                                            key={order.id}
+                                                            className="border-t border-[#E5E5E5]"
+                                                        >
+                                                            <td className="px-6 py-5 poppins">
+                                                                #{order.id.slice(0, 8)}
+                                                            </td>
+
+                                                            <td className="px-6 py-5 poppins">
+                                                                {new Date(
+                                                                    order.createdAt
+                                                                ).toLocaleDateString()}
+                                                            </td>
+
+                                                            <td className="px-6 py-5 poppins">
+                                                                ${order.totalPrice}
+                                                            </td>
+
+                                                            <td className="px-6 py-5">
+                                                                <span className="rounded-full bg-red-100 px-3 py-1 text-sm text-red-700">
+                                                                    Cancelled
+                                                                </span>
+                                                            </td>
+
+                                                            <td className="px-6 py-5 text-center">
+                                                                <Link
+                                                                    href={`/account/orders/${order.id}`}
+                                                                    className="rounded bg-[#DB4444] px-4 py-2 text-white"
+                                                                >
+                                                                    View
+                                                                </Link>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     )}
                                 </>
                             )}
                         </div>
                     </div>
-                </div>
-            </section>
+                </div >
+            </section >
         </>
     )
 }

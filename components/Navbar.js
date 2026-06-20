@@ -16,6 +16,7 @@ const navLinks = [
 ];
 export default function Navbar() {
     const [open, setOpen] = useState(false);
+    const [user, setUser] = useState(null);
     const [showAccountMenu, setShowAccountMenu] = useState(false);
     const pathname = usePathname();
     const isAuthPage = pathname === "/login" || pathname === "/signup"
@@ -39,12 +40,22 @@ export default function Navbar() {
         0
     );
     const wishlist = useWishlistStore((state) => state.wishlist);
+    useEffect(() => {
+        const getSession = async () => {
+            const { data } = await authClient.getSession();
 
+            if (data?.user) {
+                setUser(data.user);
+            }
+        };
+
+        getSession();
+    }, []);
     return (
         <nav className="w-full mx-auto  border-b border-black/30 bg-white fixed top-0 left-0 right-0 z-50">
             <div className="mx-auto flex min-h-[60px] w-full max-w-[1170px] items-center justify-between mt-6 gap-6 px-4 lg:px-0">
                 <h1 className="inter text-[24px] font-bold leading-[24px] tracking-[0.03em] text-black">
-                    Exclusive
+                    <Link href="/">Exclusive</Link>
                 </h1>
                 <ul className="hidden items-center gap-[50px] poppins md:flex">
                     <li><Link href="/" className={`text-center text-[16px] font-normal leading-[24px] text-black ${pathname === "/"
@@ -116,38 +127,41 @@ export default function Navbar() {
                                 </svg>
                             </Link>
                             <div className="relative">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setShowAccountMenu(!showAccountMenu);
-                                    }}
-                                    className={`flex h-[32px] w-[32px] items-center justify-center rounded-full transition-all ${showAccountMenu ? "bg-[#DB4444]" : ""
-                                        }`}
-                                >
-                                    <svg
-                                        width="32"
-                                        height="32"
-                                        viewBox="0 0 32 32"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
+                              
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setShowAccountMenu(!showAccountMenu);
+                                        }}
+                                        className={`flex h-[32px] w-[32px] items-center justify-center rounded-full transition-all ${showAccountMenu ? "bg-[#DB4444]" : ""
+                                            }`}
                                     >
-                                        <path
-                                            d="M24 27V24.3333C24 22.9188 23.5224 21.5623 22.6722 20.5621C21.8221 19.5619 20.669 19 19.4667 19H11.5333C10.331 19 9.17795 19.5619 8.32778 20.5621C7.47762 21.5623 7 22.9188 7 24.3333V27"
-                                            stroke={showAccountMenu ? "white" : "black"}
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                        <path
-                                            d="M16.5 14C18.9853 14 21 11.9853 21 9.5C21 7.01472 18.9853 5 16.5 5C14.0147 5 12 7.01472 12 9.5C12 11.9853 14.0147 14 16.5 14Z"
-                                            stroke={showAccountMenu ? "white" : "black"}
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                </button>
-                                {showAccountMenu && (
+                                        <svg
+                                            width="32"
+                                            height="32"
+                                            viewBox="0 0 32 32"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M24 27V24.3333C24 22.9188 23.5224 21.5623 22.6722 20.5621C21.8221 19.5619 20.669 19 19.4667 19H11.5333C10.331 19 9.17795 19.5619 8.32778 20.5621C7.47762 21.5623 7 22.9188 7 24.3333V27"
+                                                stroke={showAccountMenu ? "white" : "black"}
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                            <path
+                                                d="M16.5 14C18.9853 14 21 11.9853 21 9.5C21 7.01472 18.9853 5 16.5 5C14.0147 5 12 7.01472 12 9.5C12 11.9853 14.0147 14 16.5 14Z"
+                                                stroke={showAccountMenu ? "white" : "black"}
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </button>
+                                
+
+                                {user && showAccountMenu && (
                                     <div className="absolute right-0 top-[45px] z-50 w-[225px] rounded-[4px] bg-[linear-gradient(180deg,#BCA6C9_0%,#2B2139_100%)] p-[20px] text-white backdrop-blur-[20px]">
 
                                         <div className="flex flex-col gap-[20px]">
@@ -180,7 +194,7 @@ export default function Navbar() {
                                                 </span>
                                             </Link>
 
-                                            <button className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
+                                            <Link href="/account?tab=orders" className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
                                                 <span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 6.3V20.5C3 20.7652 3.10536 21.0196 3.29289 21.2071C3.48043 21.3946 3.73478 21.5 4 21.5H20C20.2652 21.5 20.5196 21.3946 20.7071 21.2071C20.8946 21.0196 21 20.7652 21 20.5V6.3H3Z" stroke="#FAFAFA" strokeWidth="1.5" strokeLinejoin="round" />
                                                     <path d="M21 6.3L18.1665 2.5H5.8335L3 6.3M15.7775 9.6C15.7775 11.699 14.0865 13.4 12 13.4C9.9135 13.4 8.222 11.699 8.222 9.6" stroke="#FAFAFA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -189,9 +203,9 @@ export default function Navbar() {
                                                 <span className="poppins text-[14px] leading-[21px]">
                                                     My Order
                                                 </span>
-                                            </button>
+                                            </Link>
 
-                                            <button className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
+                                            <Link href="/account?tab=cancellations" className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
                                                 <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                 </svg>
@@ -199,9 +213,9 @@ export default function Navbar() {
                                                 <span className="poppins text-[14px] leading-[21px]">
                                                     My Cancellations
                                                 </span>
-                                            </button>
+                                            </Link>
 
-                                            <button className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
+                                            <Link href="/account?tab=cancellations" className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
                                                 <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
                                                 </svg>
@@ -209,7 +223,7 @@ export default function Navbar() {
                                                 <span className="poppins text-[14px] leading-[21px]">
                                                     My Reviews
                                                 </span>
-                                            </button>
+                                            </Link>
 
                                             <button onClick={handleLogout} className="flex items-center gap-[16px] cursor-pointer hover:opacity-85">
                                                 <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">

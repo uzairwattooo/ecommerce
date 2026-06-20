@@ -4,12 +4,21 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({ children }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-    if (!session) redirect("/login");
+    let session = null;
+
+    try {
+        session = await auth.api.getSession({
+            headers: await headers(),
+        });
+    } catch (error) {
+        console.log("ADMIN_SESSION_ERROR:", error);
+        redirect("/login");
+    }
+
+    if (!session?.user) redirect("/login");
 
     if (session.user.role !== "admin") redirect("/");
+
     return (
         <div className="min-h-screen bg-[#F5F5F5]">
             <div className="flex">
