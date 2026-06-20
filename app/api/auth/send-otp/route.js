@@ -12,9 +12,6 @@ const transporter = nodemailer.createTransport({
         pass: process.env.GMAIL_APP_PASSWORD,
     },
 });
-console.log(process.env.GMAIL_USER);
-console.log(process.env.GMAIL_APP_PASSWORD);
-
 export async function POST(req) {
     try {
         const { name, email, password } = await req.json();

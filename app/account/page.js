@@ -301,13 +301,14 @@ export default function Account() {
                                         <h3 className="mb-[16px] poppins text-[16px]">
                                             Password Changes
                                         </h3>
-                                        <div className="space-y-[16px]">
+                                        <div autoComplete="off" className="space-y-[16px]">
                                             <input
                                                 name="currentPassword"
                                                 type="password"
                                                 value={passwordForm.currentPassword}
                                                 onChange={handlePasswordChange}
                                                 placeholder="Current Password"
+                                                autoComplete="off"
                                                 className="h-[50px] w-full rounded-[4px] bg-[#F5F5F5] px-4 outline-none"
                                             />
 
@@ -497,7 +498,7 @@ export default function Account() {
                                             No cancelled orders found.
                                         </p>
                                     ) : (
-                                        <div className=" rounded-[4px] border border-[#E5E5E5]">
+                                        <div className="overflow-x-hidden rounded-[4px] border border-[#E5E5E5]">
                                             <table className="w-full min-w-[800px]">
                                                 <thead>
                                                     <tr className="bg-[#F5F5F5]">
