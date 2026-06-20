@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
       <body className={`${poppins.variable} ${inter.variable} min-h-full flex flex-col`} cz-shortcut-listen="true">
         <TopBar />
         <Navbar />
-        <div className="pt-[150px]">
+        <div className="pt-[80px]">
 
         {children}
         </div>
