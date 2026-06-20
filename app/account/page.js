@@ -398,7 +398,7 @@ export default function Account() {
                                             No orders found.
                                         </p>
                                     ) : (
-                                        <div className="overflow-x-auto rounded-[4px] border border-[#E5E5E5]">
+                                        <div className="overflow-x-hidden rounded-[4px] border border-[#E5E5E5]">
                                             <table className="w-full min-w-[800px]">
                                                 <thead>
                                                     <tr className="bg-[#F5F5F5]">
