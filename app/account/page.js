@@ -69,7 +69,6 @@ export default function Account() {
         getProfile();
         getCancelledOrders();
         getOrders();
-        getAddress();
     }, []);
     const handleChange = (e) => {
         setForm({
@@ -159,38 +158,6 @@ export default function Account() {
         toast.success("Order cancelled");
         getOrders();
         getCancelledOrders();
-    };
-    const handleAddressChange = (e) => {
-        setAddressForm({
-            ...addressForm,
-            [e.target.name]: e.target.value,
-        });
-    };
-    const saveAddress = async () => {
-        const res = await fetch("/api/profile/address", {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(addressForm),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            toast.error(data.error || "Failed to save address");
-            return;
-        }
-
-        toast.success("Address saved successfully");
-    };
-    const getAddress = async () => {
-        const res = await fetch("/api/profile/address");
-        const data = await res.json();
-
-        if (res.ok) {
-            setAddressForm(data.address);
-        }
     };
     return (
         <>
@@ -324,7 +291,7 @@ export default function Account() {
                                                 name="address"
                                                 value={form.address}
                                                 onChange={handleChange}
-                                                autoComplete="street-address"
+                                                autoComplete="off"
                                                 className="h-[50px] w-full rounded-[4px] bg-[#F5F5F5] px-4 outline-none"
                                             />
                                         </div>
@@ -382,83 +349,17 @@ export default function Account() {
                                         Address Book
                                     </h2>
 
-                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-
-                                        <div>
-                                            <label className="mb-2 block">First Name</label>
-                                            <input
-                                                name="firstName"
-                                                value={addressForm.firstName}
-                                                onChange={handleAddressChange}
-                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="mb-2 block">Company Name</label>
-                                            <input
-                                                name="companyName"
-                                                value={addressForm.companyName}
-                                                onChange={handleAddressChange}
-                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-2">
-                                            <label className="mb-2 block">Street Address</label>
-                                            <input
-                                                name="streetAddress"
-                                                value={addressForm.streetAddress}
-                                                onChange={handleAddressChange}
-                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-2">
-                                            <label className="mb-2 block">
-                                                Apartment, floor, etc. (optional)
-                                            </label>
-                                            <input
-                                                name="apartment"
-                                                value={addressForm.apartment}
-                                                onChange={handleAddressChange}
-                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="mb-2 block">Town / City</label>
-                                            <input
-                                                name="city"
-                                                value={addressForm.city}
-                                                onChange={handleAddressChange}
-                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="mb-2 block">Phone Number</label>
-                                            <input
-                                                name="phone"
-                                                value={addressForm.phone}
-                                                onChange={handleAddressChange}
-                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-2">
-                                            <label className="mb-2 block">Email Address</label>
-                                            <input
-                                                name="email"
-                                                value={addressForm.email}
-                                                onChange={handleAddressChange}
-                                                className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
-                                            />
-                                        </div>
-                                    </div>
+                                    <textarea
+                                        name="address"
+                                        value={form.address}
+                                        onChange={handleChange}
+                                        rows={4}
+                                        placeholder="House No, Street, Floor, Area, City"
+                                        className="w-full rounded-[4px] bg-[#F5F5F5] p-4 outline-none"
+                                    />
 
                                     <button
-                                        onClick={saveAddress}
+                                        onClick={saveProfile}
                                         className="mt-6 h-[56px] w-[180px] rounded bg-[#DB4444] text-white"
                                     >
                                         Save Address
@@ -519,7 +420,7 @@ export default function Account() {
                                                         <th className="px-6 py-4 text-center poppins font-medium">
                                                             Action
                                                         </th>
-                                                        <th className="px-6 py-4 text-center poppins font-medium">
+                                                        <th className="px-5 py-4 text-center poppins font-medium">
                                                             Cancel
                                                         </th>
                                                     </tr>
@@ -572,7 +473,7 @@ export default function Account() {
                                                                         onClick={() => cancelOrder(order.id)}
                                                                         className="rounded bg-red-500 px-4 py-2 text-white cursor-pointer"
                                                                     >
-                                                                        Cancel Order
+                                                                        Cancel
                                                                     </button>
                                                                 )}
                                                             </td>
@@ -596,7 +497,7 @@ export default function Account() {
                                             No cancelled orders found.
                                         </p>
                                     ) : (
-                                        <div className="overflow-x-auto rounded-[4px] border border-[#E5E5E5]">
+                                        <div className=" rounded-[4px] border border-[#E5E5E5]">
                                             <table className="w-full min-w-[800px]">
                                                 <thead>
                                                     <tr className="bg-[#F5F5F5]">

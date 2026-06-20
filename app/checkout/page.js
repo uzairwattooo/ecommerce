@@ -175,6 +175,22 @@ export default function Checkout() {
 
     return Object.keys(newErrors).length === 0;
   };
+  const fillSavedAddress = async () => {
+    const res = await fetch("/api/profile");
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast.error("Saved address not found");
+      return;
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      streetAddress: data.address || "",
+    }));
+
+    toast.success("Address filled");
+  };
   return (
     <main className="w-full bg-white py-12 sm:py-16 lg:py-[80px]">
       <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
@@ -214,9 +230,8 @@ export default function Checkout() {
                     name={field.name}
                     value={form[field.name]}
                     onChange={handleChange}
-                    className={`mt-[8px] h-[50px] w-full rounded-[4px] bg-[#F5F5F5] px-4 outline-none ${errors[field.name]
-                      ? "border border-red-500"
-                      : ""
+                    onClick={field.name === "streetAddress" ? fillSavedAddress : undefined}
+                    className={`mt-[8px] h-[50px] w-full rounded-[4px] bg-[#F5F5F5] px-4 outline-none ${errors[field.name] ? "border border-red-500" : ""
                       }`}
                   />
 
