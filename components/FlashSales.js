@@ -207,9 +207,12 @@ export default function FlashSales() {
                                 return (
                                     <div key={product.id} className="h-[350px] w-[270px] shrink-0">
                                         <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-                                            <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] poppins text-[12px] text-white">
-                                                -{product.discountPercent}%
-                                            </span>
+                                            {product.discountPercent && (
+
+                                                <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] poppins text-[12px] text-white">
+                                                    -{product.discountPercent}%
+                                                </span>
+                                            )}
 
                                             <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
                                                 <button onClick={() => toggleWishlist(product)} className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
@@ -270,9 +273,9 @@ export default function FlashSales() {
                     </div>
 
                     <div className="mt-[60px] flex justify-center">
-                        <button className="h-[56px] w-[234px] cursor-pointer rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white hover:opacity-85">
+                        <Link href="/products" className="flex justify-center items-center h-[56px] w-[234px] cursor-pointer rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white hover:opacity-85">
                             View All Products
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -615,9 +618,9 @@ export default function FlashSales() {
                     </div>
 
                     <div className="mt-[60px] flex justify-center">
-                        <button className="h-[56px] w-[234px] cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85">
+                        <Link href="/products" className="flex justify-center items-center h-[56px] w-[234px] cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85">
                             View All Products
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </section>

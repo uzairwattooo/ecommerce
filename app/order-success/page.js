@@ -30,9 +30,14 @@ function OrderSuccessContent() {
             Continue Shopping
           </Link>
 
-          <Link href="/account/orders" className="flex h-[50px] items-center justify-center rounded border border-black px-6">
-            View Orders
-          </Link>
+          {orderId && (
+            <Link
+              href={`/account/orders/${orderId}`}
+              className="flex h-[50px] items-center justify-center rounded border border-black px-6"
+            >
+              View Order
+            </Link>
+          )}
         </div>
       </div>
     </main>
