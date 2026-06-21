@@ -127,7 +127,6 @@ export default function Navbar() {
                                 </svg>
                             </Link>
                             <div className="relative">
-                              
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();

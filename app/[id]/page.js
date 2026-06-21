@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useCartStore } from "../../store/cartStore";
-import { useWishlistStore } from "../../store/wishlistStore";
+import { useCartStore } from "../../../store/cartStore";
+import { useWishlistStore } from "../../../store/wishlistStore";
 
 const colors = ["#A0BCE0", "#E07575"];
 const sizes = ["XS", "S", "M", "L", "XL"];
@@ -179,8 +179,8 @@ export default function ProductDetails() {
                                             key={size}
                                             onClick={() => setActiveSize(size)}
                                             className={`h-[32px] w-[32px] cursor-pointer rounded-[4px] border text-[14px] hover:opacity-85 ${activeSize === size
-                                                    ? "border-[#DB4444] bg-[#DB4444] text-white"
-                                                    : "border-black/50 bg-white text-black"
+                                                ? "border-[#DB4444] bg-[#DB4444] text-white"
+                                                : "border-black/50 bg-white text-black"
                                                 }`}
                                         >
                                             {size}
