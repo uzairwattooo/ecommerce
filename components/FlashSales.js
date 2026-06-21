@@ -44,9 +44,6 @@ export default function FlashSales() {
         const getProducts = async () => {
             const res = await fetch("/api/products");
             const data = await res.json();
-
-            console.log("API DATA:", data);
-
             setProducts(Array.isArray(data) ? data : []);
         };
 
@@ -123,6 +120,7 @@ export default function FlashSales() {
     );
     const wishlist = useWishlistStore((state) => state.wishlist);
     const toggleWishlist = useWishlistStore((state) => state.toggleWishlist);
+
     return (
         <>
             <section className="w-full overflow-hidden border-b border-[#ECECEC] bg-white py-[40px]">
@@ -529,26 +527,39 @@ export default function FlashSales() {
 
                     <div className="grid grid-cols-1 justify-items-center gap-x-[30px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start lg:gap-y-[60px]">
                         {featuredProducts.map((product) => {
+                            const selectedIndex = product.selectedColor ?? 0;
+
+                            const selectedVariant = product.variants?.[selectedIndex];
+
+                            const selectedImage =
+                                product.images?.find((img) => img.variantId === selectedVariant?.id)?.imageUrl ||
+                                product.images?.find((img) => img.color === selectedVariant?.color)?.imageUrl ||
+                                product.images?.[0]?.imageUrl ||
+                                "/images/Frame 611.png";
                             const isNew =
                                 Date.now() - new Date(product.createdAt).getTime() <
                                 7 * 24 * 60 * 60 * 1000;
                             const isFavourite = wishlist.some(
                                 (item) => item.id === product.id
                             );
+
                             return (
                                 <div key={product.id} className="w-full max-w-[270px]">
                                     <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-                                        {product.discount && (
-                                            <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#00FF66] px-[12px] py-[4px] poppins text-[12px] text-white">
-                                                {product.discount}
-                                            </span>
-                                        )}
+                                        <div className="flex">
 
-                                        {isNew && (
-                                            <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#00C853] px-[12px] py-[4px] text-[12px] text-white">
-                                                NEW
-                                            </span>
-                                        )}
+                                            {product.discountPercent && (
+                                                <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] poppins text-[12px] text-white">
+                                                    -{product.discountPercent}%
+                                                </span>
+                                            )}
+
+                                            {isNew && (
+                                                <span className="absolute left-[12px] top-[12px]  rounded-[4px] bg-[#00C853] px-[12px] py-[4px] text-[12px] text-white">
+                                                    NEW
+                                                </span>
+                                            )}
+                                        </div>
 
                                         <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
                                             <button onClick={() => toggleWishlist(product)} className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
@@ -573,11 +584,7 @@ export default function FlashSales() {
 
                                         <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
                                             <img
-                                                src={
-                                                    product.variants?.length
-                                                        ? product.variants[product.selectedColor || 0]?.imageUrl
-                                                        : product.images?.[0]?.imageUrl
-                                                }
+                                                src={product.hasVariants ? selectedImage : product.images?.[0]?.imageUrl || "/images/Frame 611.png"}
                                                 alt={product.name}
                                                 className="h-[180px] w-[190px] object-contain"
                                             />
@@ -600,13 +607,17 @@ export default function FlashSales() {
                                         </span>
                                     </div>
 
+
                                     {product.variants?.length > 1 && (
-                                        <div className="flex gap-2 mt-2">
-                                            {product.variants?.map((variant, index) => (
+                                        <div className="mt-2 flex gap-2">
+                                            {product.variants.map((variant, index) => (
                                                 <button
                                                     key={variant.id}
                                                     onClick={() => changeColor(product.id, index)}
-                                                    className="h-5 w-5 rounded-full border"
+                                                    className={`h-5 w-5 rounded-full border ${(product.selectedColor ?? 0) === index
+                                                            ? "border-2 border-black"
+                                                            : "border-black/30"
+                                                        }`}
                                                     style={{ backgroundColor: variant.color }}
                                                 />
                                             ))}

@@ -15,6 +15,9 @@ export const products = pgTable("products", {
     discountPercent: integer("discount_percent"),
     categoryId: text("category_id"),
     ratingCount: integer("rating_count").default(0),
+    stock: integer("stock").default(0),
+    hasVariants: boolean("has_variants").default(false),
+    badge: text("badge"),
     createdAt: timestamp("created_at").defaultNow(),
     isFlashSale: boolean("is_flash_sale").default(false),
     isBestSelling: boolean("is_best_selling").default(false),
@@ -25,21 +28,26 @@ export const productImages = pgTable("product_images", {
     productId: text("product_id")
         .notNull()
         .references(() => products.id, { onDelete: "cascade" }),
+    variantId: text("variant_id")
+        .references(() => productVariants.id, { onDelete: "cascade" }),
     imageUrl: text("image_url").notNull(),
-    color: text("color"), 
+    color: text("color"),
     isPrimary: boolean("is_primary").default(false),
 });
 
 export const productVariants = pgTable("product_variants", {
     id: text("id").primaryKey(),
+
     productId: text("product_id")
         .notNull()
         .references(() => products.id, { onDelete: "cascade" }),
+
+    colorName: text("color_name"),
     color: text("color"),
     size: text("size"),
+
     price: integer("price"),
     stock: integer("stock").default(0),
-    imageUrl: text("image_url"),
 });
 export const productReviews = pgTable("product_reviews", {
     id: text("id").primaryKey(),
@@ -47,7 +55,7 @@ export const productReviews = pgTable("product_reviews", {
         .notNull()
         .references(() => products.id, { onDelete: "cascade" }),
     userId: text("user_id").notNull(),
-    rating: integer("rating").notNull(), 
+    rating: integer("rating").notNull(),
     comment: text("comment"),
     createdAt: timestamp("created_at").defaultNow(),
 });

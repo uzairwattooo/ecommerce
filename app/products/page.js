@@ -24,6 +24,7 @@ export default function ProductsPage() {
     const wishlist = useWishlistStore((state) => state.wishlist);
     const toggleWishlist = useWishlistStore((state) => state.toggleWishlist);
 
+
     const addToCart = useCartStore(
         (state) => state.addToCart
     );
@@ -41,7 +42,7 @@ export default function ProductsPage() {
                         return (
                             <div
                                 key={item.id}
-                                
+
                             >
                                 <div className="w-full max-w-[270px]">
                                     <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">

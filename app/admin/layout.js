@@ -25,17 +25,29 @@ export default async function AdminLayout({ children }) {
                 <aside className="sticky top-0 hidden h-screen w-[300px] bg-black px-6 py-8 text-white lg:block">
                     <h2 className="inter text-[28px] font-semibold mt-10">Admin</h2>
 
-                    <nav className="mt-10 flex flex-col gap-4 poppins text-[16px]">
+                    <nav className="poppins mt-10 flex flex-col gap-4 text-[16px]">
                         <Link href="/admin" className="rounded px-4 py-3 hover:bg-white/10">
                             Dashboard
+                        </Link>
+
+                        <Link href="/admin/products" className="rounded px-4 py-3 hover:bg-white/10">
+                            Products
                         </Link>
 
                         <Link href="/admin/products/add" className="rounded px-4 py-3 hover:bg-white/10">
                             Add Product
                         </Link>
 
+                        <Link href="/admin/orders" className="rounded px-4 py-3 hover:bg-white/10">
+                            Orders
+                        </Link>
+
                         <Link href="/admin/coupons" className="rounded px-4 py-3 hover:bg-white/10">
                             Coupons
+                        </Link>
+
+                        <Link href="/admin/settings" className="rounded px-4 py-3 hover:bg-white/10">
+                            Settings
                         </Link>
 
                         <Link href="/" className="rounded px-4 py-3 hover:bg-white/10">

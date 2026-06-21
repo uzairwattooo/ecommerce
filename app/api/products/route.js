@@ -6,55 +6,78 @@ import { eq } from "drizzle-orm";
 export async function POST(req) {
     try {
         const body = await req.json();
-
         const productId = nanoid();
 
         await db.insert(products).values({
             id: productId,
             name: body.name,
-            description: body.description,
+            description: body.description || "",
             basePrice: Number(body.price),
             oldPrice: body.oldPrice ? Number(body.oldPrice) : null,
-            discountPercent: body.discountPercent ? Number(body.discountPercent) : null,
-            categoryId: body.category,
+            discountPercent: body.discountPercent
+                ? Number(body.discountPercent)
+                : null,
+            categoryId: body.category || "",
             ratingCount: 0,
-            isFlashSale: body.isFlashSale || false,
-            isBestSelling: body.isBestSelling || false,
-            isFeatured: body.isFeatured || false,
-            saleEndTime: body.saleEndTime ? new Date(body.saleEndTime) : null,
+            stock: body.hasVariants ? 0 : Number(body.stock || 0),
+            hasVariants: Boolean(body.hasVariants),
             badge: body.badge || null,
+            isFlashSale: Boolean(body.isFlashSale),
+            isBestSelling: Boolean(body.isBestSelling),
+            isFeatured: Boolean(body.isFeatured),
         });
 
-        for (const color of body.colors || []) {
-            const variantId = nanoid();
-
-            await db.insert(productVariants).values({
-                id: variantId,
-                productId,
-                color: color.colorCode,
-                size: null,
-                price: Number(body.price),
-                stock: Number(body.stock || 0),
-                imageUrl: color.images?.[0] || null,
-            });
-
-            for (const img of color.images || []) {
+        if (!body.hasVariants) {
+            for (const [index, img] of (body.images || []).entries()) {
                 await db.insert(productImages).values({
                     id: nanoid(),
                     productId,
+                    variantId: null,
                     imageUrl: img,
-                    color: color.colorCode,
-                    isPrimary: false,
+                    color: null,
+                    isPrimary: index === 0,
                 });
             }
         }
 
+        if (body.hasVariants) {
+            for (const variant of body.variants || []) {
+                const variantId = nanoid();
 
+                await db.insert(productVariants).values({
+                    id: variantId,
+                    productId,
+                    colorName: variant.colorName || "",
+                    color: variant.colorCode || "",
+                    size: null,
+                    price: variant.price ? Number(variant.price) : Number(body.price),
+                    stock: Number(variant.stock || 0),
+                });
 
-        return Response.json({ success: true });
+                for (const [index, img] of (variant.images || []).entries()) {
+                    await db.insert(productImages).values({
+                        id: nanoid(),
+                        productId,
+                        variantId,
+                        imageUrl: img,
+                        color: variant.colorCode || "",
+                        isPrimary: index === 0,
+                    });
+                }
+            }
+        }
+
+        return Response.json({
+            success: true,
+            productId,
+        });
     } catch (error) {
         console.log("ADD_PRODUCT_ERROR:", error);
-        return Response.json({ error: "Product save nahi hua" }, { status: 500 });
+
+        return Response.json(
+            { error: error.message || "Product save nahi hua" },
+            { status: 500 }
+        );
     }
 }
 
@@ -64,10 +87,15 @@ export async function GET() {
         const imagesData = await db.select().from(productImages);
         const variantsData = await db.select().from(productVariants);
 
-        const formatted = productsData.map((p) => ({
-            ...p,
-            images: imagesData.filter((img) => img.productId === p.id),
-            variants: variantsData.filter((v) => v.productId === p.id),
+        const formatted = productsData.map((product) => ({
+            ...product,
+            images: imagesData.filter((img) => img.productId === product.id),
+            variants: variantsData
+                .filter((variant) => variant.productId === product.id)
+                .map((variant) => ({
+                    ...variant,
+                    images: imagesData.filter((img) => img.variantId === variant.id),
+                })),
         }));
 
         return Response.json(formatted);
@@ -75,7 +103,7 @@ export async function GET() {
         console.log("GET_PRODUCTS_ERROR:", error);
 
         return Response.json(
-            { error: "Failed to fetch products" },
+            { error: error.message || "Failed to fetch products" },
             { status: 500 }
         );
     }

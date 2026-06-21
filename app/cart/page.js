@@ -196,7 +196,7 @@ export default function Cart() {
             </div>
 
             <div className="mt-6 flex justify-center">
-              <Link href="/checkout" className="flex mt-18 h-[56px] items-center justify-center w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 sm:w-[260px]">
+              <Link href="/checkout" className="flex h-[56px] items-center justify-center w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 sm:w-[260px]">
                 Process to checkout
               </Link>
             </div>
