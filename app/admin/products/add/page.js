@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function AddProductPage() {
     const [loading, setLoading] = useState(false);
     const [hasVariants, setHasVariants] = useState(false);
-
+    const [categories, setCategories] = useState([]);
     const [form, setForm] = useState({
         name: "",
         description: "",
@@ -130,7 +130,18 @@ export default function AddProductPage() {
             setLoading(false);
         }
     };
+    useEffect(() => {
+        const getCategories = async () => {
+            const res = await fetch("/api/admin/categories");
+            const data = await res.json();
 
+            if (res.ok) {
+                setCategories(data.categories || []);
+            }
+        };
+
+        getCategories();
+    }, []);
     return (
         <section className="w-full">
             <h1 className="inter text-[32px] font-semibold text-black">
@@ -147,7 +158,20 @@ export default function AddProductPage() {
 
                     <input name="discountPercent" value={form.discountPercent} onChange={handleChange} placeholder="Discount %" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
 
-                    <input name="category" value={form.category} onChange={handleChange} placeholder="Category ID" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
+                    <select
+                        name="category"
+                        value={form.category}
+                        onChange={handleChange}
+                        className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none"
+                    >
+                        <option value="">Select Category</option>
+
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.slug}>
+                                {cat.name}
+                            </option>
+                        ))}
+                    </select>
 
                     <input name="stock" value={form.stock} onChange={handleChange} placeholder="Stock" disabled={hasVariants} className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none disabled:opacity-50" />
 

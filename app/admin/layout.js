@@ -37,6 +37,9 @@ export default async function AdminLayout({ children }) {
                         <Link href="/admin/products/add" className="rounded px-4 py-3 hover:bg-white/10">
                             Add Product
                         </Link>
+                        <Link href="/admin/categories" className="rounded px-4 py-3 hover:bg-white/10">
+                            Add Categories
+                        </Link>
 
                         <Link href="/admin/orders" className="rounded px-4 py-3 hover:bg-white/10">
                             Orders

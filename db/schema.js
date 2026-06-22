@@ -103,7 +103,20 @@ export const categories = pgTable("categories", {
 });
 export const siteSettings = pgTable("site_settings", {
     id: text("id").primaryKey(),
-    flashSaleEndTime: timestamp("flash_sale_end_time"),
+
+    flashSaleEnabled: boolean("flash_sale_enabled").default(false),
+
+    flashSaleDiscountPercent: integer(
+        "flash_sale_discount_percent"
+    ).default(0),
+
+    flashSaleStartTime: timestamp(
+        "flash_sale_start_time"
+    ),
+
+    flashSaleEndTime: timestamp(
+        "flash_sale_end_time"
+    ),
 });
 export const coupons = pgTable("coupons", {
     id: text("id").primaryKey(),

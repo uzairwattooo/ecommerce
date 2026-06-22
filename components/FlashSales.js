@@ -5,18 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { useCartStore } from "../store/cartStore";
 import { useWishlistStore } from "../store/wishlistStore";
 
-
-const categories = [
-    { id: 1, name: "Phones", icon: "/icons/Category-CellPhone.svg" },
-    { id: 2, name: "Computers", icon: "/icons/Category-Computer.svg" },
-    { id: 3, name: "SmartWatch", icon: "/icons/Category-SmartWatch.svg" },
-    { id: 4, name: "Camera", icon: "/icons/Category-Camera.svg" },
-    { id: 5, name: "HeadPhones", icon: "/icons/Category-Headphone.svg" },
-    { id: 6, name: "Gaming", icon: "/icons/Category-Gamepad.svg" },
-    { id: 7, name: "Camera", icon: "/icons/Category-Camera.svg" },
-    { id: 8, name: "HeadPhones", icon: "/icons/Category-Headphone.svg" },
-    { id: 9, name: "Gaming", icon: "/icons/Category-Gamepad.svg" },
-];
 export default function FlashSales() {
     const scrollRef = useRef(null);
     const scrolRef = useRef(null);
@@ -34,12 +22,22 @@ export default function FlashSales() {
             behavior: "smooth",
         });
     };
-    const [selectedCategory, setSelectedCategory] = useState(4);
+    const [selectedCategory, setSelectedCategory] = useState("all");
     const [products, setProducts] = useState([]);
-    const flashProducts = products.filter((p) => p.isFlashSale);
+    const [category, setCategory] = useState([])
+
     const bestSellingProducts = products.filter((p) => p.isBestSelling);
     const featuredProducts = products.filter((p) => p.isFeatured);
 
+
+    useEffect(() => {
+        const getCategory = async () => {
+            const res = await fetch("/api/admin/categories");
+            const data = await res.json();
+            setCategory(data.categories || []);
+        }
+        getCategory();
+    }, []);
     useEffect(() => {
         const getProducts = async () => {
             const res = await fetch("/api/products");
@@ -49,19 +47,25 @@ export default function FlashSales() {
 
         getProducts();
     }, []);
-    const [saleEndTime, setSaleEndTime] = useState(null);
     const [timeLeft, setTimeLeft] = useState({
         days: "00",
         hours: "00",
         minutes: "00",
         seconds: "00",
     });
+    const [settings, setSettings] = useState(null);
+    const saleEndTime = settings?.flashSaleEndTime;
+    const saleActive =
+        settings?.flashSaleEnabled &&
+        new Date() >= new Date(settings?.flashSaleStartTime) &&
+        new Date() <= new Date(settings?.flashSaleEndTime);
+
     useEffect(() => {
         const getSettings = async () => {
-            const res = await fetch("/api/settings");
+            const res = await fetch("/api/admin/settings");
             const data = await res.json();
 
-            setSaleEndTime(data.flashSaleEndTime);
+            setSettings(data);
         };
 
         getSettings();
@@ -120,7 +124,9 @@ export default function FlashSales() {
     );
     const wishlist = useWishlistStore((state) => state.wishlist);
     const toggleWishlist = useWishlistStore((state) => state.toggleWishlist);
-
+    const flashProducts = saleActive
+        ? products.filter((p) => p.isFlashSale)
+        : [];
     return (
         <>
             <section className="w-full overflow-hidden border-b border-[#ECECEC] bg-white py-[40px]">
@@ -197,22 +203,28 @@ export default function FlashSales() {
                         className="-mx-4 overflow-x-auto scroll-smooth px-4 pb-2 lg:mx-0 lg:w-[calc(100%+138px)] lg:px-0 [&::-webkit-scrollbar]:hidden"
                     >
                         <div className="flex h-[350px] w-max gap-[20px] xl:gap-[19px] md:gap-[30px]">
-                            {products.map((product) => {
+                            {flashProducts.map((product) => {
                                 const isFavourite = wishlist.some(
                                     (item) => item.id === product.id
                                 );
-
+                                const salePrice =
+                                    saleActive && product.isFlashSale
+                                        ? Math.round(
+                                            product.basePrice -
+                                            (product.basePrice *
+                                                settings.flashSaleDiscountPercent) /
+                                            100
+                                        )
+                                        : product.basePrice;
                                 return (
                                     <div key={product.id} className="h-[350px] w-[270px] shrink-0">
                                         <div className="group relative h-[250px] w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-                                            {product.discountPercent && (
-
-                                                <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] poppins text-[12px] text-white">
-                                                    -{product.discountPercent}%
+                                            {saleActive && product.isFlashSale && (
+                                                <span className="absolute left-[12px] top-[12px] z-30 rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] text-white">
+                                                    -{settings.flashSaleDiscountPercent}%
                                                 </span>
                                             )}
-
-                                            <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
+                                            <div className="absolute right-[12px] top-[12px] z-10 flex flex-col gap-[8px]">
                                                 <button onClick={() => toggleWishlist(product)} className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -235,7 +247,7 @@ export default function FlashSales() {
                                                 </Link>
                                             </div>
 
-                                            <div className="absolute left-[40px] top-[35px] flex h-[180px] w-[190px] items-center justify-center">
+                                            <div className="absolute left-1/2 top-[35px] z-0 flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
                                                 <img
                                                     src={product.images?.[0]?.imageUrl || "/images/placeholder.png"}
                                                     alt={product.name}
@@ -253,8 +265,15 @@ export default function FlashSales() {
                                         </h3>
 
                                         <div className="mt-[8px] flex gap-[12px] poppins text-[16px] font-medium leading-[24px]">
-                                            <span className="text-[#DB4444]">${product.basePrice}</span>
-                                            <span className="text-black/50 line-through">${product.oldPrice}</span>
+                                            <span className="text-[#DB4444]">
+                                                ${salePrice}
+                                            </span>
+
+                                            {saleActive && product.isFlashSale && (
+                                                <span className="text-black/50 line-through">
+                                                    ${product.basePrice}
+                                                </span>
+                                            )}
                                         </div>
 
                                         <div className="mt-[8px] flex items-center gap-[8px]">
@@ -320,26 +339,27 @@ export default function FlashSales() {
                         ref={scrolRef}
                         className="-mx-4 flex gap-[20px] overflow-x-auto scroll-smooth px-4 pb-2 sm:gap-[30px] lg:mx-0 lg:px-0 [&::-webkit-scrollbar]:hidden"
                     >
-                        {categories.map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => setSelectedCategory(item.id)}
-                                className={`flex h-[145px] w-[170px] shrink-0 flex-col items-center justify-center gap-[16px] cursor-pointer hover:opacity-85 rounded-[4px] border ${selectedCategory === item.id
+                        {category.map((cat) => (
+                            <Link
+                                key={cat.id}
+                                href={`/category/${cat.slug}`}
+                                onClick={() => setSelectedCategory(cat.slug)}
+                                className={`flex h-[145px] w-[170px] shrink-0 flex-col items-center justify-center gap-[16px] cursor-pointer hover:opacity-85 rounded-[4px] border ${selectedCategory === cat.slug
                                     ? "border-[#DB4444] bg-[#DB4444] text-white"
                                     : "border-black/30 bg-white text-black"
                                     }`}
                             >
                                 <img
-                                    src={item.icon}
-                                    alt={item.name}
-                                    className={`h-14 w-14 ${selectedCategory === item.id ? "invert brightness-0" : ""
+                                    src={cat.icon}
+                                    alt={cat.name}
+                                    className={`h-14 w-14 ${selectedCategory === cat.slug ? "invert brightness-0" : ""
                                         }`}
                                 />
 
                                 <span className="poppins text-[16px] leading-[24px]">
-                                    {item.name}
+                                    {cat.name}
                                 </span>
-                            </button>
+                            </Link>
                         ))}
                     </div>
                 </div>
@@ -363,9 +383,9 @@ export default function FlashSales() {
                         </div>
 
                         <div className="hidden gap-[8px] md:flex">
-                            <button className="h-[56px] w-[159px] cursor-pointer rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white hover:opacity-85">
+                            <Link href="/products" className="flex justify-center items-center h-[56px] w-[159px] rounded-[4px] cursor-pointer bg-[#DB4444] text-[16px] font-medium text-white hover:opacity-85">
                                 View All
-                            </button>
+                            </Link>
                         </div>
                     </div>
 
@@ -438,9 +458,9 @@ export default function FlashSales() {
                     </div>
 
                     <div className="mt-[40px] flex justify-center md:hidden">
-                        <button className="h-[56px] w-[159px] cursor-pointer rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white hover:opacity-85">
+                        <Link href="/products" className="flex justify-center items-center h-[56px] w-[159px] cursor-pointer rounded-[4px] bg-[#DB4444] text-[16px] font-medium text-white hover:opacity-85">
                             View All
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -528,9 +548,7 @@ export default function FlashSales() {
                     <div className="grid grid-cols-1 justify-items-center gap-x-[30px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start lg:gap-y-[60px]">
                         {featuredProducts.map((product) => {
                             const selectedIndex = product.selectedColor ?? 0;
-
                             const selectedVariant = product.variants?.[selectedIndex];
-
                             const selectedImage =
                                 product.images?.find((img) => img.variantId === selectedVariant?.id)?.imageUrl ||
                                 product.images?.find((img) => img.color === selectedVariant?.color)?.imageUrl ||
@@ -542,26 +560,24 @@ export default function FlashSales() {
                             const isFavourite = wishlist.some(
                                 (item) => item.id === product.id
                             );
-
                             return (
                                 <div key={product.id} className="w-full max-w-[270px]">
                                     <div className="group relative h-[250px] w-full max-w-[270px] overflow-hidden rounded-[4px] bg-[#F5F5F5]">
-                                        <div className="flex">
-
+                                        <div className="absolute left-[12px] top-[12px] z-30 flex flex-col gap-2">
                                             {product.discountPercent && (
-                                                <span className="absolute left-[12px] top-[12px] rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] poppins text-[12px] text-white">
+                                                <span className="rounded-[4px] bg-[#DB4444] px-[12px] py-[4px] text-[12px] text-white">
                                                     -{product.discountPercent}%
                                                 </span>
                                             )}
 
                                             {isNew && (
-                                                <span className="absolute left-[12px] top-[12px]  rounded-[4px] bg-[#00C853] px-[12px] py-[4px] text-[12px] text-white">
+                                                <span className="rounded-[4px] bg-[#00C853] px-[12px] py-[4px] text-[12px] text-white">
                                                     NEW
                                                 </span>
                                             )}
                                         </div>
 
-                                        <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px]">
+                                        <div className="absolute right-[12px] top-[12px] flex flex-col gap-[8px] z-10">
                                             <button onClick={() => toggleWishlist(product)} className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85">
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -578,11 +594,9 @@ export default function FlashSales() {
                                                     />
                                                 </svg>
                                             </button>
-
                                             <Link href={`/product/${product.id}`} className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-white hover:opacity-85 "> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6"> <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /> </svg> </Link>
                                         </div>
-
-                                        <div className="absolute left-1/2 top-[35px] flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
+                                        <div className="absolute left-1/2 top-[35px] z-0 flex h-[180px] w-[190px] -translate-x-1/2 items-center justify-center">
                                             <img
                                                 src={product.hasVariants ? selectedImage : product.images?.[0]?.imageUrl || "/images/Frame 611.png"}
                                                 alt={product.name}
@@ -615,8 +629,8 @@ export default function FlashSales() {
                                                     key={variant.id}
                                                     onClick={() => changeColor(product.id, index)}
                                                     className={`h-5 w-5 rounded-full border ${(product.selectedColor ?? 0) === index
-                                                            ? "border-2 border-black"
-                                                            : "border-black/30"
+                                                        ? "border-2 border-black"
+                                                        : "border-black/30"
                                                         }`}
                                                     style={{ backgroundColor: variant.color }}
                                                 />

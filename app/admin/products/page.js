@@ -16,6 +16,24 @@ export default function AdminProductsPage() {
 
         getProducts();
     }, []);
+
+    const deleteProduct = async (id) => {
+        const confirmDelete = confirm("Are you sure you want to delete this product?");
+        if (!confirmDelete) return;
+
+        const res = await fetch(`/api/admin/products/${id}`, {
+            method: "DELETE",
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.error || "Delete failed");
+            return;
+        }
+
+        setProducts((prev) => prev.filter((product) => product.id !== id));
+    };
     return (
         <section className="w-full">
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -122,11 +140,11 @@ export default function AdminProductsPage() {
 
                                 <td className="px-6 py-4 text-center">
                                     <div className="flex justify-center gap-2">
-                                        <button className="rounded bg-yellow-500 px-3 py-1 text-white">
+                                        <Link href={`/admin/products/edit/${product.id}`} className="rounded bg-yellow-500 px-3 py-1 text-white">
                                             Edit
-                                        </button>
+                                        </Link>
 
-                                        <button className="rounded bg-red-500 px-3 py-1 text-white">
+                                        <button onClick={()=> deleteProduct(product.id)} className="rounded bg-red-500 px-3 py-1 text-white">
                                             Delete
                                         </button>
                                     </div>
