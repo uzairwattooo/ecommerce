@@ -50,6 +50,133 @@ export default function AdminDashboardPage() {
                     </div>
                 ))}
             </div>
+            <div className="mt-10 rounded bg-white p-6 shadow-[0_1px_13px_rgba(0,0,0,0.08)]">
+                <h2 className="inter mb-5 text-[24px] font-semibold">
+                    Recent Orders
+                </h2>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[700px]">
+                        <thead>
+                            <tr className="border-b">
+                                <th className="px-4 py-3 text-left">Order ID</th>
+                                <th className="px-4 py-3 text-left">Customer</th>
+                                <th className="px-4 py-3 text-left">Amount</th>
+                                <th className="px-4 py-3 text-left">Status</th>
+                                <th className="px-4 py-3 text-left">Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {stats?.recentOrders?.map((order) => (
+                                <tr key={order.id} className="border-b">
+                                    <td className="px-4 py-3">
+                                        {order.id.slice(0, 8)}...
+                                    </td>
+
+                                    <td className="px-4 py-3">
+                                        {order.firstName}
+                                    </td>
+
+                                    <td className="px-4 py-3">
+                                        ${order.totalPrice}
+                                    </td>
+
+                                    <td className="px-4 py-3">
+                                        <span
+                                            className={`rounded px-2 py-1 text-xs text-white ${order.status === "pending"
+                                                ? "bg-yellow-500"
+                                                : order.status === "cancelled"
+                                                    ? "bg-red-500"
+                                                    : order.status === "delivered"
+                                                        ? "bg-green-500"
+                                                        : "bg-blue-500"
+                                                }`}
+                                        >
+                                            {order.status}
+                                        </span>
+                                    </td>
+
+                                    <td className="px-4 py-3">
+                                        {new Date(order.createdAt).toLocaleDateString()}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div className="mt-10 rounded bg-white p-6 shadow-[0_1px_13px_rgba(0,0,0,0.08)]">
+                <h2 className="inter mb-5 text-[24px] font-semibold">
+                    Low Stock Products
+                </h2>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[600px]">
+                        <thead>
+                            <tr className="border-b">
+                                <th className="px-4 py-3 text-left">Product</th>
+                                <th className="px-4 py-3 text-left">Stock</th>
+                                <th className="px-4 py-3 text-left">Price</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {stats?.lowStockProducts?.map((product) => (
+                                <tr key={product.id} className="border-b">
+                                    <td className="px-4 py-3">{product.name}</td>
+                                    <td className="px-4 py-3 text-red-500">
+                                        {product.stock || 0} left
+                                    </td>
+                                    <td className="px-4 py-3">${product.basePrice}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div className="mt-10 rounded bg-white p-6 shadow-[0_1px_13px_rgba(0,0,0,0.08)]">
+                <h2 className="inter mb-5 text-[24px] font-semibold">
+                    Top Selling Products
+                </h2>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[700px]">
+                        <thead>
+                            <tr className="border-b">
+                                <th className="px-4 py-3 text-left">Product</th>
+                                <th className="px-4 py-3 text-left">Sold</th>
+                                <th className="px-4 py-3 text-left">Revenue</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {stats?.topSellingProducts?.map((product) => (
+                                <tr key={product.productId} className="border-b">
+                                    <td className="px-4 py-3">
+                                        <div className="flex items-center gap-3">
+                                            <img
+                                                src={product.image}
+                                                alt={product.productName}
+                                                className="h-12 w-12 rounded object-cover"
+                                            />
+                                            <span>{product.productName}</span>
+                                        </div>
+                                    </td>
+
+                                    <td className="px-4 py-3">
+                                        {product.totalSold}
+                                    </td>
+
+                                    <td className="px-4 py-3">
+                                        ${product.totalRevenue}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </section>
     );
 }

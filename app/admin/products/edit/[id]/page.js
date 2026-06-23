@@ -8,6 +8,7 @@ export default function EditProductPage() {
     const { id } = useParams();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [categories, setCategories] = useState([]);
 
     const [form, setForm] = useState({
         name: "",
@@ -84,7 +85,18 @@ export default function EditProductPage() {
         toast.success("Product updated");
         router.push("/admin/products");
     };
+    useEffect(() => {
+        const getCategories = async () => {
+            const res = await fetch("/api/admin/categories");
+            const data = await res.json();
 
+            if (res.ok) {
+                setCategories(data.categories || []);
+            }
+        };
+
+        getCategories();
+    }, []);
     return (
         <section className="w-full">
             <h1 className="inter text-[32px] font-semibold text-black">
@@ -97,8 +109,29 @@ export default function EditProductPage() {
                     <input name="price" value={form.price} onChange={handleChange} placeholder="Base Price" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
                     <input name="oldPrice" value={form.oldPrice} onChange={handleChange} placeholder="Old Price" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
                     <input name="discountPercent" value={form.discountPercent} onChange={handleChange} placeholder="Discount %" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
-                    <input name="category" value={form.category} onChange={handleChange} placeholder="Category" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
-                    <input name="stock" value={form.stock} onChange={handleChange} placeholder="Stock" disabled={form.hasVariants} className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none disabled:opacity-50" />
+                    <select
+                        name="category"
+                        value={form.category}
+                        onChange={handleChange}
+                        className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none"
+                    >
+                        <option value="">Select Category</option>
+
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.slug}>
+                                {cat.name}
+                            </option>
+                        ))}
+                    </select>
+                    <input
+                        type="number"
+                        name="stock"
+                        value={form.stock}
+                        onChange={handleChange}
+                        placeholder="Stock"
+                        disabled={form.hasVariants}
+                        className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none disabled:opacity-50"
+                    />
                     <input name="badge" value={form.badge} onChange={handleChange} placeholder="Badge" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
                     <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="min-h-[100px] rounded bg-[#F5F5F5] p-4 outline-none md:col-span-2" />
                 </div>

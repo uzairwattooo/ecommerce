@@ -23,7 +23,7 @@ export default async function AdminLayout({ children }) {
         <div className="min-h-screen bg-[#F5F5F5]">
             <div className="flex">
                 <aside className="sticky top-0 hidden h-screen w-[300px] bg-black px-6 py-8 text-white lg:block">
-                    <h2 className="inter text-[28px] font-semibold mt-10">Admin</h2>
+                    <h2 className="inter text-[28px] font-semibold mt-">Admin</h2>
 
                     <nav className="poppins mt-10 flex flex-col gap-4 text-[16px]">
                         <Link href="/admin" className="rounded px-4 py-3 hover:bg-white/10">
@@ -43,6 +43,9 @@ export default async function AdminLayout({ children }) {
 
                         <Link href="/admin/orders" className="rounded px-4 py-3 hover:bg-white/10">
                             Orders
+                        </Link>
+                        <Link href="/admin/customers" className="rounded px-4 py-3 hover:bg-white/10">
+                            Customers
                         </Link>
 
                         <Link href="/admin/coupons" className="rounded px-4 py-3 hover:bg-white/10">
