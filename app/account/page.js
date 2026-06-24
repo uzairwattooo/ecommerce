@@ -159,6 +159,20 @@ export default function Account() {
         getOrders();
         getCancelledOrders();
     };
+    const [reviews, setReviews] = useState([]);
+
+    useEffect(() => {
+        const getReviews = async () => {
+            const res = await fetch("/api/my-reviews");
+            const data = await res.json();
+
+            if (res.ok) {
+                setReviews(data.reviews || []);
+            }
+        };
+
+        getReviews();
+    }, []);
     return (
         <>
             <section className="w-full bg-white py-12 sm:py-16 lg:py-[80px]">
@@ -233,6 +247,13 @@ export default function Account() {
                                         }`}
                                 >
                                     My Cancellations
+                                </li>
+                                <li
+                                    onClick={() => setActiveTab("reviews")}
+                                    className={`cursor-pointer ${activeTab === "reviews" ? "text-[#DB4444]" : "text-black/50"
+                                        }`}
+                                >
+                                    My Reviews
                                 </li>
                             </ul>
 
@@ -486,6 +507,26 @@ export default function Account() {
                                         </div>
                                     )}
                                 </>
+                            )}
+                            {activeTab === "reviews" && (
+                                <div className="space-y-4">
+                                    <h2 className="text-[24px] font-semibold">My Reviews</h2>
+
+                                    {reviews.length === 0 ? (
+                                        <p className="text-black/50">No reviews yet.</p>
+                                    ) : (
+                                        reviews.map((review) => (
+                                            <div key={review.id} className="rounded border p-4">
+                                                <h3 className="font-medium">{review.productName}</h3>
+                                                <p className="text-[#FFAD33]">
+                                                    {"★".repeat(review.rating)}
+                                                    {"☆".repeat(5 - review.rating)}
+                                                </p>
+                                                <p className="mt-2">{review.comment}</p>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
                             )}
                             {activeTab === "cancellations" && (
                                 <>

@@ -26,8 +26,56 @@ export default function ProductDetails() {
     const [rating, setRating] = useState(5);
     const [user, setUser] = useState(null);
     const [comment, setComment] = useState("");
+    const [editingReviewId, setEditingReviewId] = useState(null);
+    const [editRating, setEditRating] = useState(5);
+    const [editComment, setEditComment] = useState("");
 
+    const startEditReview = (review) => {
+        setEditingReviewId(review.id);
+        setEditRating(review.rating);
+        setEditComment(review.comment || "");
+    };
 
+    const updateReview = async (reviewId) => {
+        const res = await fetch(`/api/reviews/${reviewId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                rating: editRating,
+                comment: editComment,
+            }),
+        });
+        const text = await res.text();
+        const data = text ? JSON.parse(text) : {};
+        if (!res.ok) {
+            toast.error(data.error || "Review update failed");
+            return;
+        }
+
+        toast.success("Review updated");
+        setEditingReviewId(null);
+        setEditComment("");
+        setEditRating(5);
+        getReviews();
+    };
+
+    const deleteReview = async (reviewId) => {
+        if (!confirm("Delete this review?")) return;
+
+        const res = await fetch(`/api/reviews/${reviewId}`, {
+            method: "DELETE",
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            toast.error(data.error || "Review delete failed");
+            return;
+        }
+
+        toast.success("Review deleted");
+        getReviews();
+    };
     useEffect(() => {
         const getSession = async () => {
             const session = await authClient.getSession();
@@ -326,6 +374,125 @@ export default function ProductDetails() {
                         </div>
                     </div>
                 </div>
+                <section className="mt-[80px] border-t pt-[40px]">
+                    <h2 className="inter text-[28px] font-semibold">Reviews</h2>
+
+                    <form onSubmit={submitReview} className="mt-6 rounded bg-[#F5F5F5] p-6">
+                        <label className="block poppins text-[16px] font-medium">
+                            Rating
+                        </label>
+
+                        <select
+                            value={rating}
+                            onChange={(e) => setRating(Number(e.target.value))}
+                            className="mt-2 h-[45px] rounded border px-4"
+                        >
+                            <option value={5}>★★★★★ 5</option>
+                            <option value={4}>★★★★ 4</option>
+                            <option value={3}>★★★ 3</option>
+                            <option value={2}>★★ 2</option>
+                            <option value={1}>★ 1</option>
+                        </select>
+
+                        <textarea
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            placeholder="Write your review..."
+                            className="mt-4 min-h-[120px] w-full rounded border p-4 outline-none"
+                        />
+
+                        <button className="mt-4 h-[48px] rounded bg-[#DB4444] px-6 text-white">
+                            Submit Review
+                        </button>
+                    </form>
+
+                    <div className="mt-8 space-y-4">
+                        {reviews.length === 0 ? (
+                            <p className="text-black/50">No reviews yet.</p>
+                        ) : (
+                            reviews.map((review) => (
+                                <div key={review.id} className="rounded border p-5">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[#FFAD33]">
+                                            {"★".repeat(review.rating)}
+                                            {"☆".repeat(5 - review.rating)}
+                                        </span>
+
+                                        <span className="text-sm text-black/50">
+                                            {review.createdAt
+                                                ? new Date(review.createdAt).toLocaleDateString()
+                                                : ""}
+                                        </span>
+                                    </div>
+                                    <h4 className="font-semibold">
+                                        {review.userName || "Customer"}
+                                    </h4>
+
+                                    {editingReviewId === review.id ? (
+                                        <div className="mt-3">
+                                            <select
+                                                value={editRating}
+                                                onChange={(e) => setEditRating(Number(e.target.value))}
+                                                className="h-[40px] rounded border px-3"
+                                            >
+                                                <option value={5}>★★★★★ 5</option>
+                                                <option value={4}>★★★★ 4</option>
+                                                <option value={3}>★★★ 3</option>
+                                                <option value={2}>★★ 2</option>
+                                                <option value={1}>★ 1</option>
+                                            </select>
+
+                                            <textarea
+                                                value={editComment}
+                                                onChange={(e) => setEditComment(e.target.value)}
+                                                className="mt-3 min-h-[100px] w-full rounded border p-3"
+                                            />
+
+                                            <div className="mt-3 flex gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => updateReview(review.id)}
+                                                    className="rounded bg-[#DB4444] px-4 py-2 text-white"
+                                                >
+                                                    Save
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setEditingReviewId(null)}
+                                                    className="rounded border px-4 py-2"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p className="mt-3 text-black/80">{review.comment}</p>
+                                    )}
+                                    {user?.id === review.userId &&
+                                        editingReviewId !== review.id && (
+                                            <div className="mt-3 flex gap-2">
+                                                <button
+                                                    onClick={() => startEditReview(review)}
+                                                    className="rounded bg-yellow-500 px-3 py-1 text-white"
+                                                >
+                                                    Edit
+                                                </button>
+
+                                                <button
+                                                    onClick={() => deleteReview(review.id)}
+                                                    className="rounded bg-red-500 px-3 py-1 text-white"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        )}
+                                </div>
+                            ))
+                        )}
+                    </div>
+
+                </section>
             </main>
             <section className="w-full max-w-[1440px] mx-auto overflow-hidden bg-white py-20 border-b border-[#ECECEC]">
                 <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
@@ -418,67 +585,7 @@ export default function ProductDetails() {
                         })}
                     </div>
                 </div>
-                <section className="mt-[80px] border-t pt-[40px]">
-                    <h2 className="inter text-[28px] font-semibold">Reviews</h2>
 
-                    <form onSubmit={submitReview} className="mt-6 rounded bg-[#F5F5F5] p-6">
-                        <label className="block poppins text-[16px] font-medium">
-                            Rating
-                        </label>
-
-                        <select
-                            value={rating}
-                            onChange={(e) => setRating(Number(e.target.value))}
-                            className="mt-2 h-[45px] rounded border px-4"
-                        >
-                            <option value={5}>★★★★★ 5</option>
-                            <option value={4}>★★★★ 4</option>
-                            <option value={3}>★★★ 3</option>
-                            <option value={2}>★★ 2</option>
-                            <option value={1}>★ 1</option>
-                        </select>
-
-                        <textarea
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                            placeholder="Write your review..."
-                            className="mt-4 min-h-[120px] w-full rounded border p-4 outline-none"
-                        />
-
-                        <button className="mt-4 h-[48px] rounded bg-[#DB4444] px-6 text-white">
-                            Submit Review
-                        </button>
-                    </form>
-
-                    <div className="mt-8 space-y-4">
-                        {reviews.length === 0 ? (
-                            <p className="text-black/50">No reviews yet.</p>
-                        ) : (
-                            reviews.map((review) => (
-                                <div key={review.id} className="rounded border p-5">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-[#FFAD33]">
-                                            {"★".repeat(review.rating)}
-                                            {"☆".repeat(5 - review.rating)}
-                                        </span>
-
-                                        <span className="text-sm text-black/50">
-                                            {review.createdAt
-                                                ? new Date(review.createdAt).toLocaleDateString()
-                                                : ""}
-                                        </span>
-                                    </div>
-                                    <h4 className="font-semibold">
-                                        {review.userName || "Customer"}
-                                    </h4>
-
-
-                                    <p className="mt-3 text-black/80">{review.comment}</p>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </section>
             </section >
         </>
     );
