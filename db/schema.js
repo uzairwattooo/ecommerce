@@ -123,6 +123,7 @@ export const coupons = pgTable("coupons", {
     code: text("code").notNull().unique(),
     discountPercent: integer("discount_percent").notNull(),
     isActive: boolean("is_active").default(true),
-    expiresAt: timestamp("expires_at"),
+    startAt: timestamp("start_at"),
+    endAt: timestamp("end_at"),
     createdAt: timestamp("created_at").defaultNow(),
 });

@@ -1,10 +1,7 @@
-
-import Navbar from "../components/Navbar";
-import TopBar from "../components/TopBar";
-import Footer from "../components/Footer";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import LayoutWrapper from "@/components/LayoutWrapper";
 
 export const metadata = {
   title: "E-Commerce Site",
@@ -28,14 +25,11 @@ export default function RootLayout({ children }) {
       lang="en"
     >
       <body className={`${poppins.variable} ${inter.variable} min-h-full flex flex-col`} cz-shortcut-listen="true">
-        <TopBar />
-        <Navbar />
-        <div className="pt-[80px]">
+        <LayoutWrapper>
+          {children}
+        </LayoutWrapper>
 
-        {children}
-        </div>
         <Toaster richColors position="top-right" />
-        <Footer />
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useCartStore } from "../store/cartStore";
 import { useWishlistStore } from "../store/wishlistStore";
+import { getSalePrice } from "../lib/getSalePrice";
 
 export default function FlashSales() {
     const scrollRef = useRef(null);
@@ -127,6 +128,7 @@ export default function FlashSales() {
     const flashProducts = saleActive
         ? products.filter((p) => p.isFlashSale)
         : [];
+
     return (
         <>
             <section className="w-full overflow-hidden border-b border-[#ECECEC] bg-white py-[40px]">
@@ -349,13 +351,18 @@ export default function FlashSales() {
                                     : "border-black/30 bg-white text-black"
                                     }`}
                             >
-                                <img
-                                    src={cat.icon}
-                                    alt={cat.name}
-                                    className={`h-14 w-14 ${selectedCategory === cat.slug ? "invert brightness-0" : ""
-                                        }`}
-                                />
-
+                                {cat.icon ? (
+                                    <img
+                                        src={cat.icon}
+                                        alt={cat.name}
+                                        className={`h-14 w-14 ${selectedCategory === cat.slug ? "invert brightness-0" : ""
+                                            }`}
+                                    />
+                                ) : (
+                                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#F5F5F5] text-[20px]">
+                                        {cat.name?.charAt(0)}
+                                    </div>
+                                )}
                                 <span className="poppins text-[16px] leading-[24px]">
                                     {cat.name}
                                 </span>

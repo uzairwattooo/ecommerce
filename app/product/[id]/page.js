@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useCartStore } from "../../../store/cartStore";
 import { useWishlistStore } from "../../../store/wishlistStore";
+import { authClient } from "../../../lib/auth-client";
 
 const colors = ["#A0BCE0", "#E07575"];
 const sizes = ["XS", "S", "M", "L", "XL"];
@@ -21,7 +22,70 @@ export default function ProductDetails() {
     const [activeColor, setActiveColor] = useState(0);
     const [activeSize, setActiveSize] = useState("M");
     const [quantity, setQuantity] = useState(1);
+    const [reviews, setReviews] = useState([]);
+    const [rating, setRating] = useState(5);
+    const [user, setUser] = useState(null);
+    const [comment, setComment] = useState("");
 
+
+    useEffect(() => {
+        const getSession = async () => {
+            const session = await authClient.getSession();
+
+            console.log("SESSION:", session);
+            if (session?.data?.user) {
+                setUser(session.data.user);
+            }
+        };
+
+        getSession();
+    }, []);
+    const getReviews = async () => {
+        const res = await fetch(`/api/reviews?productId=${id}`);
+        const data = await res.json();
+
+        if (res.ok) {
+            setReviews(data.reviews || []);
+        }
+    };
+    useEffect(() => {
+        if (id) getReviews();
+    }, [id]);
+    const submitReview = async (e) => {
+        e.preventDefault();
+        if (!user) {
+            toast.error("Please login first");
+            router.push("/login");
+            return;
+        }
+        if (!comment.trim()) {
+            toast.error("Review comment required");
+            return;
+        }
+
+        const res = await fetch("/api/reviews", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                productId: product.id,
+                userId: user.id,
+                rating,
+                comment,
+            }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            toast.error(data.error || "Review submit failed");
+            return;
+        }
+
+        toast.success("Review submitted");
+        setRating(5);
+        setComment("");
+        getReviews();
+    };
     useEffect(() => {
         const getProduct = async () => {
             const res = await fetch(`/api/products/${id}`);
@@ -354,6 +418,67 @@ export default function ProductDetails() {
                         })}
                     </div>
                 </div>
+                <section className="mt-[80px] border-t pt-[40px]">
+                    <h2 className="inter text-[28px] font-semibold">Reviews</h2>
+
+                    <form onSubmit={submitReview} className="mt-6 rounded bg-[#F5F5F5] p-6">
+                        <label className="block poppins text-[16px] font-medium">
+                            Rating
+                        </label>
+
+                        <select
+                            value={rating}
+                            onChange={(e) => setRating(Number(e.target.value))}
+                            className="mt-2 h-[45px] rounded border px-4"
+                        >
+                            <option value={5}>★★★★★ 5</option>
+                            <option value={4}>★★★★ 4</option>
+                            <option value={3}>★★★ 3</option>
+                            <option value={2}>★★ 2</option>
+                            <option value={1}>★ 1</option>
+                        </select>
+
+                        <textarea
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            placeholder="Write your review..."
+                            className="mt-4 min-h-[120px] w-full rounded border p-4 outline-none"
+                        />
+
+                        <button className="mt-4 h-[48px] rounded bg-[#DB4444] px-6 text-white">
+                            Submit Review
+                        </button>
+                    </form>
+
+                    <div className="mt-8 space-y-4">
+                        {reviews.length === 0 ? (
+                            <p className="text-black/50">No reviews yet.</p>
+                        ) : (
+                            reviews.map((review) => (
+                                <div key={review.id} className="rounded border p-5">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[#FFAD33]">
+                                            {"★".repeat(review.rating)}
+                                            {"☆".repeat(5 - review.rating)}
+                                        </span>
+
+                                        <span className="text-sm text-black/50">
+                                            {review.createdAt
+                                                ? new Date(review.createdAt).toLocaleDateString()
+                                                : ""}
+                                        </span>
+                                    </div>
+                                    <h4 className="font-semibold">
+                                        {review.userName || "Customer"}
+                                    </h4>
+
+
+                                    <p className="mt-3 text-black/80">{review.comment}</p>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </section>
             </section >
         </>
     );

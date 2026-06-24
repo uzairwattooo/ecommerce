@@ -17,7 +17,8 @@ export async function POST(req) {
       code: body.code.trim().toUpperCase(),
       discountPercent: Number(body.discountPercent),
       isActive: body.isActive ?? true,
-      expiresAt: body.expiresAt ? new Date(body.expiresAt) : null,
+      startAt: body.startAt ? new Date(body.startAt) : null,
+      endAt: body.endAt ? new Date(body.endAt) : null,
     });
 
     return Response.json({ success: true });

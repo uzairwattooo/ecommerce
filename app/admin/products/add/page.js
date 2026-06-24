@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -7,6 +8,7 @@ export default function AddProductPage() {
     const [loading, setLoading] = useState(false);
     const [hasVariants, setHasVariants] = useState(false);
     const [categories, setCategories] = useState([]);
+    const [errors, setErrors] = useState({})
     const [form, setForm] = useState({
         name: "",
         description: "",
@@ -20,7 +22,6 @@ export default function AddProductPage() {
         isBestSelling: false,
         isFeatured: false,
     });
-
     const [simpleImages, setSimpleImages] = useState([]);
     const [variants, setVariants] = useState([
         {
@@ -31,7 +32,21 @@ export default function AddProductPage() {
             images: [],
         },
     ]);
+    const validate = () => {
+        let newErrors = {};
 
+        if (!form.name.trim()) newErrors.name = "Product name is required";
+        if (!form.price.trim()) newErrors.price = "Price is required";
+        if (!form.category.trim()) newErrors.category = "Category is required";
+        if (!form.description.trim()) newErrors.description = "Description is required";
+
+        if (!hasVariants && simpleImages.length === 0) {
+            newErrors.images = "Product image is required";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
@@ -39,6 +54,10 @@ export default function AddProductPage() {
             ...form,
             [name]: type === "checkbox" ? checked : value,
         });
+        setErrors({
+            ...errors,
+            [name]: "",
+        })
     };
 
     const uploadImages = async (files) => {
@@ -101,9 +120,10 @@ export default function AddProductPage() {
             },
         ]);
     };
-
+const router = useRouter()
     const submitProduct = async () => {
         try {
+            if (!validate()) return;
             setLoading(true);
             const payload = {
                 ...form,
@@ -124,6 +144,7 @@ export default function AddProductPage() {
                 return;
             }
             toast.success("Product added successfully");
+            router.push("/admin/products")
         } catch (error) {
             toast.error(error.message || "Something went wrong");
         } finally {
@@ -150,34 +171,46 @@ export default function AddProductPage() {
 
             <div className="mt-8 rounded bg-white p-6 shadow-[0_1px_13px_rgba(0,0,0,0.08)]">
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <input name="name" value={form.name} onChange={handleChange} placeholder="Product Name" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
-
-                    <input name="price" value={form.price} onChange={handleChange} placeholder="Base Price" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
-
-                    <input name="oldPrice" value={form.oldPrice} onChange={handleChange} placeholder="Old Price" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
-
-                    <input name="discountPercent" value={form.discountPercent} onChange={handleChange} placeholder="Discount %" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
-
-                    <select
-                        name="category"
-                        value={form.category}
-                        onChange={handleChange}
-                        className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none"
-                    >
-                        <option value="">Select Category</option>
-
-                        {categories.map((cat) => (
-                            <option key={cat.id} value={cat.slug}>
-                                {cat.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    <input name="stock" value={form.stock} onChange={handleChange} placeholder="Stock" disabled={hasVariants} className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none disabled:opacity-50" />
-
-                    <input name="badge" value={form.badge} onChange={handleChange} placeholder="Badge e.g NEW" className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none" />
-
-                    <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="min-h-[100px] rounded bg-[#F5F5F5] p-4 outline-none md:col-span-2" />
+                    <div ><input name="name" value={form.name} onChange={handleChange} placeholder="Product Name" className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none" />
+                        {errors.name && (
+                            <p className="mt-1 text-sm text-red-500">{errors.name}</p>
+                        )}
+                    </div>
+                    <div><input name="price" value={form.price} onChange={handleChange} placeholder="Base Price" className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none" />
+                        {errors.price && (
+                            <p className="mt-1 text-sm text-red-500">{errors.price}</p>
+                        )}
+                    </div>
+                    <div><input name="oldPrice" value={form.oldPrice} onChange={handleChange} placeholder="Old Price" className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none" /></div>
+                    <div><input name="discountPercent" value={form.discountPercent} onChange={handleChange} placeholder="Discount %" className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none" /></div>
+                    <div>
+                        <select
+                            name="category"
+                            value={form.category}
+                            onChange={handleChange}
+                            className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
+                        >
+                            <option value="">Select Category</option>
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.slug}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.category && (
+                            <p className="mt-1 text-sm text-red-500">{errors.category}</p>
+                        )}
+                    </div>
+                    <input name="stock" value={form.stock} onChange={handleChange} placeholder="Stock" disabled={hasVariants} className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none disabled:opacity-50" />
+                    <input name="badge" value={form.badge} onChange={handleChange} placeholder="Badge e.g NEW" className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none" />
+                    <div>
+                        <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="min-h-[100px] w-full rounded bg-[#F5F5F5] p-4 outline-none md:col-span-2" />
+                        {errors.description && (
+                            <p className="mt-1 text-sm text-red-500">
+                                {errors.description}
+                            </p>
+                        )}
+                    </div>
                 </div>
 
                 <div className="mt-6 flex flex-wrap gap-5">
@@ -196,6 +229,11 @@ export default function AddProductPage() {
                             accept="image/*"
                             onChange={handleSimpleImages}
                         />
+                        {errors.images && (
+                            <p className="mt-1 text-sm text-red-500">
+                                {errors.images}
+                            </p>
+                        )}
                     </div>
                 )}
 

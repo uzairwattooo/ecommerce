@@ -17,9 +17,23 @@ export function proxy(req) {
   }
 
   // 2. allow all public pages (home, about, cart, checkout)
-  const publicRoutes = ["/", "/about", "/cart", "/checkout","/login", "/signup","/contact"];
+  const publicRoutes = [
+    "/",
+    "/about",
+    "/cart",
+    "/checkout",
+    "/login",
+    "/signup",
+    "/contact",
+    "/products",
+  ];
 
-  if (!token && !publicRoutes.includes(pathname)) {
+  const isPublicRoute =
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith("/product/") ||
+    pathname.startsWith("/category/");
+
+  if (!token && !isPublicRoute) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

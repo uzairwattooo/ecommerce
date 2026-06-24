@@ -49,19 +49,43 @@ export default function SignUp() {
         const sec = time % 60;
         return `${min}:${String(sec).padStart(2, "0")}`;
     };
-
     const handleSignup = async (e) => {
         e.preventDefault();
         if (!validateStep1()) return;
 
         setLoading(true);
 
+        const emailValue = email.trim().toLowerCase();
+
+        const checkRes = await fetch("/api/auth/check-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: emailValue }),
+        });
+
+        const checkData = await checkRes.json();
+
+        if (!checkRes.ok) {
+            setLoading(false);
+            toast.error(checkData.error || "Email check failed");
+            return;
+        }
+
+        if (checkData.exists) {
+            setLoading(false);
+            setErrors((prev) => ({
+                ...prev,
+                email: "This email is already registered",
+            }));
+            return;
+        }
+
         const res = await fetch("/api/auth/send-otp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 name: name.trim(),
-                email: email.trim().toLowerCase(),
+                email: emailValue,
                 password,
             }),
         });
@@ -75,6 +99,7 @@ export default function SignUp() {
             toast.error(data.error || "OTP send failed");
             return;
         }
+
         toast.success("OTP email par send ho gaya");
         setStep("otp");
         setSeconds(300);
@@ -128,8 +153,6 @@ export default function SignUp() {
             toast.error("Session create nahi hua");
             return;
         }
-
-        console.log("LOGIN RES:", loginRes);
         toast.success("Account created successfully");
         router.replace("/");
     };

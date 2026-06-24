@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function AdminDashboardPage() {
@@ -29,10 +30,19 @@ export default function AdminDashboardPage() {
 
     return (
         <section className="w-full">
-            <h1 className="inter text-[32px] font-semibold text-black">
-                Dashboard
-            </h1>
+            <div className="flex justify-between">
+                <h1 className="inter text-[32px] font-semibold text-black">
+                    Dashboard
+                </h1>
 
+
+                <Link href="/admin/products/add"
+                    className="flex h-[56px] w-[159px] items-center justify-center gap-2 rounded bg-[#DB4444] px-8 font-medium text-white transition-all duration-300 hover:bg-[#c73b3b] disabled:opacity-60"
+                >
+                    Add Product
+                </Link>
+
+            </div>
             <p className="poppins mt-2 text-[14px] text-black/50">
                 Overview of your store performance.
             </p>
