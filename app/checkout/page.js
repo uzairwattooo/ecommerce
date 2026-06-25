@@ -441,7 +441,7 @@ export default function Checkout() {
               <button
                 onClick={placeOrderWithStripe}
                 disabled={loading}
-                className="h-[56px] rounded bg-[#DB4444] px-6 text-white disabled:opacity-60"
+                className="ml-8 h-[56px] w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 disabled:opacity-60 sm:w-[190px]"
               >
                 {loading ? "Processing..." : "Pay with Stripe"}
               </button>
