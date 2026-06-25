@@ -28,6 +28,14 @@ export default function Navbar() {
         return () => document.removeEventListener("click", handleClick);
     }, [showAccountMenu]);
     const router = useRouter();
+    const [search, setSearch] = useState("");
+    const handleSearch = (e) => {
+        e.preventDefault();
+
+        if (!search.trim()) return;
+
+        router.push(`/search?q=${encodeURIComponent(search.trim())}`);
+    };
     const handleLogout = async () => {
         await authClient.signOut();
         router.replace("/login");
@@ -82,21 +90,25 @@ export default function Navbar() {
                 </ul>
                 <div className="flex items-center gap-[24px]">
                     <div className="relative hidden h-[38px] w-[243px] items-center rounded-[4px] bg-[#F5F5F5] sm:flex">
-                        <input
-                            type="text"
-                            placeholder="What are you looking for?"
-                            className="h-full w-full rounded-[4px] bg-transparent py-[7px] pl-[20px] pr-[44px] poppins text-[12px] font-normal leading-[18px] text-black outline-none placeholder:text-[#7D8184]"
-                        />
-                        <button
-                            type="button"
-                            aria-label="Search"
-                            className="absolute cursor-pointer right-[12px] top-1/2 flex h-[32px] w-[32px] -translate-y-1/2 items-center justify-center"
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <circle cx="11" cy="11" r="7" stroke="black" strokeWidth="1.5" />
-                                <path d="M16.5 16.5L21 21" stroke="black" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
-                        </button>
+                        <form onSubmit={handleSearch}>
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="What are you looking for?"
+                                className="h-full w-full rounded-[4px] bg-transparent py-[7px] pl-[20px] pr-[44px] poppins text-[12px] font-normal leading-[18px] text-black outline-none placeholder:text-[#7D8184]"
+                            />
+                            <button
+                                type="button"
+                                aria-label="Search"
+                                className="absolute cursor-pointer right-[12px] top-1/2 flex h-[32px] w-[32px] -translate-y-1/2 items-center justify-center"
+                            >
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="11" cy="11" r="7" stroke="black" strokeWidth="1.5" />
+                                    <path d="M16.5 16.5L21 21" stroke="black" strokeWidth="1.5" strokeLinecap="round" />
+                                </svg>
+                            </button>
+                            </form>
                     </div>
                     {!isAuthPage && (
                         <div className="hidden items-center gap-[16px] sm:flex">
@@ -128,38 +140,38 @@ export default function Navbar() {
                                 </svg>
                             </Link>
                             <div className="relative">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setShowAccountMenu(!showAccountMenu);
-                                        }}
-                                        className={`flex h-[32px] w-[32px] items-center justify-center rounded-full transition-all ${showAccountMenu ? "bg-[#DB4444]" : ""
-                                            }`}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowAccountMenu(!showAccountMenu);
+                                    }}
+                                    className={`flex h-[32px] w-[32px] items-center justify-center rounded-full transition-all ${showAccountMenu ? "bg-[#DB4444]" : ""
+                                        }`}
+                                >
+                                    <svg
+                                        width="32"
+                                        height="32"
+                                        viewBox="0 0 32 32"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
                                     >
-                                        <svg
-                                            width="32"
-                                            height="32"
-                                            viewBox="0 0 32 32"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M24 27V24.3333C24 22.9188 23.5224 21.5623 22.6722 20.5621C21.8221 19.5619 20.669 19 19.4667 19H11.5333C10.331 19 9.17795 19.5619 8.32778 20.5621C7.47762 21.5623 7 22.9188 7 24.3333V27"
-                                                stroke={showAccountMenu ? "white" : "black"}
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                            <path
-                                                d="M16.5 14C18.9853 14 21 11.9853 21 9.5C21 7.01472 18.9853 5 16.5 5C14.0147 5 12 7.01472 12 9.5C12 11.9853 14.0147 14 16.5 14Z"
-                                                stroke={showAccountMenu ? "white" : "black"}
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        </svg>
-                                    </button>
-                                
+                                        <path
+                                            d="M24 27V24.3333C24 22.9188 23.5224 21.5623 22.6722 20.5621C21.8221 19.5619 20.669 19 19.4667 19H11.5333C10.331 19 9.17795 19.5619 8.32778 20.5621C7.47762 21.5623 7 22.9188 7 24.3333V27"
+                                            stroke={showAccountMenu ? "white" : "black"}
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                        <path
+                                            d="M16.5 14C18.9853 14 21 11.9853 21 9.5C21 7.01472 18.9853 5 16.5 5C14.0147 5 12 7.01472 12 9.5C12 11.9853 14.0147 14 16.5 14Z"
+                                            stroke={showAccountMenu ? "white" : "black"}
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                </button>
+
 
                                 {user && showAccountMenu && (
                                     <div className="absolute right-0 top-[45px] z-50 w-[225px] rounded-[4px] bg-[linear-gradient(180deg,#BCA6C9_0%,#2B2139_100%)] p-[20px] text-white backdrop-blur-[20px]">

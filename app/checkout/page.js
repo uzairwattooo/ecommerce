@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useCartStore } from "../../store/cartStore";
 import { authClient } from "../../lib/auth-client";
+
 export default function Checkout() {
   const router = useRouter();
 
@@ -191,11 +192,67 @@ export default function Checkout() {
 
     toast.success("Address filled");
   };
-  const payWithStripe = async () => {
-    const res = await fetch("/api/stripe/checkout", {
+  const placeOrderWithStripe = async (e) => {
+    e?.preventDefault();
+
+    if (!validate()) return;
+    if (cartItems.length === 0) {
+      toast.error("Cart is empty");
+      return;
+    }
+    const session = await authClient.getSession();
+    if (!session?.data?.user) {
+      toast.error("Please login first");
+      router.push("/login");
+      return;
+    }
+
+    if (
+      !form.firstName ||
+      !form.streetAddress ||
+      !form.city ||
+      !form.phone ||
+      !form.email
+    ) {
+      toast.error("Please fill required fields");
+      return;
+    }
+
+    setLoading(true);
+
+    const orderRes = await fetch("/api/orders", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
+        ...form,
+        items: cartItems,
+        subtotal,
+        discount: discountAmount,
+        total,
+        couponCode,
+        paymentMethod: "stripe",
+        paymentStatus: "pending",
+      }),
+    });
+
+    const orderText = await orderRes.text();
+    const orderData = orderText ? JSON.parse(orderText) : {};
+
+    if (!orderRes.ok) {
+      setLoading(false);
+      toast.error(orderData.error || "Order failed");
+      return;
+    }
+
+    const stripeRes = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        orderId: orderData.orderId,
         items: cartItems.map((item) => ({
           name: item.name,
           price: item.price || item.basePrice,
@@ -205,14 +262,17 @@ export default function Checkout() {
       }),
     });
 
-    const data = await res.json();
+    const stripeText = await stripeRes.text();
+    const stripeData = stripeText ? JSON.parse(stripeText) : {};
 
-    if (!res.ok) {
-      toast.error(data.error || "Payment failed");
+    setLoading(false);
+
+    if (!stripeRes.ok) {
+      toast.error(stripeData.error || "Stripe checkout failed");
       return;
     }
 
-    window.location.href = data.url;
+    window.location.href = stripeData.url;
   };
   return (
     <main className="w-full bg-white py-12 sm:py-16 lg:py-[80px]">
@@ -377,9 +437,13 @@ export default function Checkout() {
                 className="h-[56px] w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 disabled:opacity-60 sm:w-[190px]"
               >
                 {loading ? "Placing..." : "Place Order"}
-              </button> <br/>
-              <button className="h-[56px] w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 disabled:opacity-60 sm:w-[190px]"onClick={payWithStripe}>
-                Pay with Stripe
+              </button>
+              <button
+                onClick={placeOrderWithStripe}
+                disabled={loading}
+                className="h-[56px] rounded bg-[#DB4444] px-6 text-white disabled:opacity-60"
+              >
+                {loading ? "Processing..." : "Pay with Stripe"}
               </button>
             </div>
           </div>

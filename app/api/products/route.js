@@ -80,12 +80,25 @@ export async function POST(req) {
     }
 }
 
-export async function GET() {
+export async function GET(req) {
     try {
-        const productsData = await db.select().from(products);
+        const { searchParams } = new URL(req.url);
+        const search = searchParams.get("search")?.toLowerCase()?.trim();
+
+        let productsData = await db.select().from(products);
+
+        if (search) {
+            productsData = productsData.filter((product) =>
+                product.name?.toLowerCase().includes(search) ||
+                product.description?.toLowerCase().includes(search) ||
+                product.categoryId?.toLowerCase().includes(search)
+            );
+        }
+
         const imagesData = await db.select().from(productImages);
         const variantsData = await db.select().from(productVariants);
         const reviewsData = await db.select().from(productReviews);
+
         const formatted = productsData.map((product) => {
             const productReviewsData = reviewsData.filter(
                 (review) => review.productId === product.id
@@ -114,6 +127,7 @@ export async function GET() {
                 averageRating,
             };
         });
+
         return Response.json(formatted);
     } catch (error) {
         console.log("GET_PRODUCTS_ERROR:", error);
