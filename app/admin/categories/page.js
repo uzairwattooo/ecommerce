@@ -187,7 +187,7 @@ export default function AdminCategoriesPage() {
 
             <button
               onClick={() => deleteCategory(cat.id)}
-              className="mt-4 h-[40px] w-full rounded bg-[#DB4444] px-4 text-white"
+              className="mt-4 h-[40px] w-full rounded bg-[#DB4444]npm run px-4 text-white"
             >
               Delete
             </button>

@@ -191,6 +191,29 @@ export default function Checkout() {
 
     toast.success("Address filled");
   };
+  const payWithStripe = async () => {
+    const res = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: cartItems.map((item) => ({
+          name: item.name,
+          price: item.price || item.basePrice,
+          quantity: item.quantity,
+          image: item.images?.[0]?.imageUrl || item.image,
+        })),
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast.error(data.error || "Payment failed");
+      return;
+    }
+
+    window.location.href = data.url;
+  };
   return (
     <main className="w-full bg-white py-12 sm:py-16 lg:py-[80px]">
       <div className="mx-auto max-w-[1170px] px-4 lg:px-0">
@@ -354,6 +377,9 @@ export default function Checkout() {
                 className="h-[56px] w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 disabled:opacity-60 sm:w-[190px]"
               >
                 {loading ? "Placing..." : "Place Order"}
+              </button> <br/>
+              <button className="h-[56px] w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 disabled:opacity-60 sm:w-[190px]"onClick={payWithStripe}>
+                Pay with Stripe
               </button>
             </div>
           </div>
