@@ -1,5 +1,5 @@
 import { db } from "../../../../lib/db";
-import { products, productImages } from "../../../../db/schema";
+import { products, productImages, productReviews } from "../../../../db/schema";
 import { eq, ne } from "drizzle-orm";
 
 export async function GET(req, context) {
@@ -12,7 +12,16 @@ export async function GET(req, context) {
             .where(eq(products.id, id));
 
         const product = productRows[0];
+        const reviews = await db
+            .select()
+            .from(productReviews)
+            .where(eq(productReviews.productId, id));
+        const totalReviews = reviews.length;
 
+        const averageRating =
+            totalReviews === 0
+                ? 0
+                : reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews;
         if (!product) {
             return Response.json(
                 { error: "Product not found" },
@@ -51,6 +60,8 @@ export async function GET(req, context) {
                 images,
             },
             relatedProducts,
+            averageRating,
+            totalReviews,
         });
     } catch (error) {
         console.log("PRODUCT_DETAIL_ERROR:", error);

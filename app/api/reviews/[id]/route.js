@@ -7,11 +7,9 @@ import { eq, and } from "drizzle-orm";
 export async function DELETE(req, context) {
     try {
         const { id } = await context.params;
-
         await db
             .delete(productReviews)
             .where(eq(productReviews.id, id));
-
         return Response.json({ success: true });
     } catch (error) {
         return Response.json(

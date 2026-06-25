@@ -1,8 +1,7 @@
 import { db } from "../../../lib/db";
 import { products, productImages, productVariants } from "../../../db/schema";
 import { nanoid } from "nanoid";
-import { eq } from "drizzle-orm";
-
+import { productReviews } from "../../../db/schema";
 export async function POST(req) {
     try {
         const body = await req.json();
@@ -86,18 +85,35 @@ export async function GET() {
         const productsData = await db.select().from(products);
         const imagesData = await db.select().from(productImages);
         const variantsData = await db.select().from(productVariants);
+        const reviewsData = await db.select().from(productReviews);
+        const formatted = productsData.map((product) => {
+            const productReviewsData = reviewsData.filter(
+                (review) => review.productId === product.id
+            );
 
-        const formatted = productsData.map((product) => ({
-            ...product,
-            images: imagesData.filter((img) => img.productId === product.id),
-            variants: variantsData
-                .filter((variant) => variant.productId === product.id)
-                .map((variant) => ({
-                    ...variant,
-                    images: imagesData.filter((img) => img.variantId === variant.id),
-                })),
-        }));
+            const totalReviews = productReviewsData.length;
 
+            const averageRating =
+                totalReviews === 0
+                    ? 0
+                    : productReviewsData.reduce(
+                        (sum, review) => sum + Number(review.rating || 0),
+                        0
+                    ) / totalReviews;
+
+            return {
+                ...product,
+                images: imagesData.filter((img) => img.productId === product.id),
+                variants: variantsData
+                    .filter((variant) => variant.productId === product.id)
+                    .map((variant) => ({
+                        ...variant,
+                        images: imagesData.filter((img) => img.variantId === variant.id),
+                    })),
+                totalReviews,
+                averageRating,
+            };
+        });
         return Response.json(formatted);
     } catch (error) {
         console.log("GET_PRODUCTS_ERROR:", error);

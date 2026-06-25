@@ -101,11 +101,13 @@ export default function ProductDetails() {
     }, [id]);
     const submitReview = async (e) => {
         e.preventDefault();
+
         if (!user) {
             toast.error("Please login first");
             router.push("/login");
             return;
         }
+
         if (!comment.trim()) {
             toast.error("Review comment required");
             return;
@@ -122,7 +124,8 @@ export default function ProductDetails() {
             }),
         });
 
-        const data = await res.json();
+        const text = await res.text();
+        const data = text ? JSON.parse(text) : {};
 
         if (!res.ok) {
             toast.error(data.error || "Review submit failed");
@@ -178,7 +181,15 @@ export default function ProductDetails() {
 
         router.push("/checkout");
     };
+    const totalReviews = reviews.length;
 
+    const averageRating =
+        totalReviews === 0
+            ? 0
+            : reviews.reduce((sum, item) => sum + Number(item.rating || 0), 0) /
+            totalReviews;
+
+    const fullStars = Math.round(averageRating);
     return (
         <>
             <main className="w-full bg-white py-[80px]">
@@ -222,8 +233,14 @@ export default function ProductDetails() {
                                 {product.name}
                             </h1>
                             <div className="mt-[16px] flex items-center gap-[8px]">
-                                <span className="text-[16px] text-[#FFAD33]">★★★★★</span>
-                                <span className="poppins text-[14px] text-black/50">(150 Reviews)</span>
+                                <span className="text-[16px] text-[#FFAD33]">
+                                    {"★".repeat(fullStars)}
+                                    {"☆".repeat(5 - fullStars)}
+                                </span>
+
+                                <span className="poppins text-[14px] text-black/50">
+                                    ({totalReviews} Reviews)
+                                </span>
                                 <span className="text-black/50">|</span>
                                 <span className="poppins text-[14px] text-[#00FF66]">In Stock</span>
                             </div>

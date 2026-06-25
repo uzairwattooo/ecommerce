@@ -279,9 +279,12 @@ export default function FlashSales() {
                                         </div>
 
                                         <div className="mt-[8px] flex items-center gap-[8px]">
-                                            <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
+                                            <span className="text-[20px] text-[#FFAD33]">
+                                                {"★".repeat(Math.round(product.averageRating || 0))}
+                                                {"☆".repeat(5 - Math.round(product.averageRating || 0))}
+                                            </span>
                                             <span className="poppins text-[14px] font-semibold text-black/50">
-                                                {product.ratingCount}
+                                                {product.totalReviews || 0}
                                             </span>
                                         </div>
                                     </div>
@@ -453,9 +456,12 @@ export default function FlashSales() {
                                     </div>
 
                                     <div className="mt-[8px] flex items-center gap-[8px]">
-                                        <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
+                                        <span className="text-[20px] text-[#FFAD33]">
+                                            {"★".repeat(Math.round(product.averageRating || 0))}
+                                            {"☆".repeat(5 - Math.round(product.averageRating || 0))}
+                                        </span>
                                         <span className="poppins text-[14px] font-semibold text-black/50">
-                                            {product.ratingCount}
+                                            {product.totalReviews || 0}
                                         </span>
                                     </div>
                                 </div>
@@ -622,9 +628,12 @@ export default function FlashSales() {
 
                                     <div className="mt-[8px] flex flex-wrap items-center gap-[8px] poppins text-[16px] font-medium leading-[24px]">
                                         <span className="text-[#DB4444]">{product.basePrice}</span>
-                                        <span className="text-[20px] text-[#FFAD33]">★★★★★</span>
+                                        <span className="text-[20px] text-[#FFAD33]">
+                                            {"★".repeat(Math.round(product.averageRating || 0))}
+                                            {"☆".repeat(5 - Math.round(product.averageRating || 0))}
+                                        </span>
                                         <span className="poppins text-[14px] font-semibold text-black/50">
-                                            {product.ratingCount}
+                                            {product.totalReviews || 0}
                                         </span>
                                     </div>
 

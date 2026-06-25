@@ -1,7 +1,7 @@
 import { db } from "../../../lib/db";
 import { productReviews } from "../../../db/schema";
 import { nanoid } from "nanoid";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc,and } from "drizzle-orm";
 import { user } from "../../../auth-schema";
 export async function GET(req) {
     try {
@@ -42,6 +42,23 @@ export async function POST(req) {
     try {
         const body = await req.json();
 
+        const existingReview = await db
+            .select()
+            .from(productReviews)
+            .where(
+                and(
+                    eq(productReviews.productId, body.productId),
+                    eq(productReviews.userId, body.userId)
+                )
+            );
+
+        if (existingReview.length > 0) {
+            return Response.json(
+                { error: "You have already reviewed this product." },
+                { status: 400 }
+            );
+        }
+
         await db.insert(productReviews).values({
             id: nanoid(),
             productId: body.productId,
@@ -52,6 +69,8 @@ export async function POST(req) {
 
         return Response.json({ success: true });
     } catch (error) {
+        console.log("ADD_REVIEW_ERROR:", error);
+
         return Response.json(
             { error: error.message || "Review add failed" },
             { status: 500 }

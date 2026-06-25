@@ -108,58 +108,96 @@ export default function AdminCategoriesPage() {
   };
   return (
     <section className="w-full">
-      <h1 className="inter text-[32px] font-semibold">Categories</h1>
+      <h1 className="inter text-[26px] font-semibold sm:text-[32px]">
+        Categories
+      </h1>
 
-      <div className="mt-8 rounded bg-white p-6 shadow">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="mt-6 rounded bg-white p-4 shadow sm:mt-8 sm:p-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           <input
             required
             placeholder="Category Name"
             value={form.name}
             onChange={(e) => {
               const name = e.target.value;
-              setForm({
-                ...form,
-                name,
-                slug: makeSlug(name),
-              });
+              setForm({ ...form, name, slug: makeSlug(name) });
             }}
-            className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none"
+            className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
           />
 
           <input
             placeholder="Slug auto generated"
             value={form.slug}
             readOnly
-            className="h-[50px] rounded bg-[#F5F5F5] px-4 outline-none"
+            className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 outline-none"
           />
 
           <input
             type="file"
             accept="image/*,.svg"
             onChange={(e) => uploadIcon(e.target.files?.[0])}
-            className="h-[50px] rounded bg-[#F5F5F5] px-4 py-3 outline-none"
+            className="h-[50px] w-full rounded bg-[#F5F5F5] px-4 py-3 outline-none md:col-span-2 xl:col-span-1"
           />
         </div>
 
         {form.icon && (
-          <div className="mt-4 flex items-center gap-3">
-            <img src={form.icon} alt="icon" className="h-12 w-12 object-contain" />
-            <span className="text-sm text-black/60">{form.icon}</span>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <img
+              src={form.icon}
+              alt="icon"
+              className="h-12 w-12 object-contain"
+            />
+            <span className="break-all text-sm text-black/60">{form.icon}</span>
           </div>
         )}
 
         <button
           onClick={addCategory}
           disabled={uploading}
-          className="mt-5 h-[48px] rounded bg-[#DB4444] px-6 text-white disabled:opacity-60"
+          className="mt-5 h-[48px] w-full rounded bg-[#DB4444] px-6 text-white disabled:opacity-60 sm:w-auto"
         >
           {uploading ? "Uploading..." : "Add Category"}
         </button>
       </div>
 
-      <div className="mt-8 rounded bg-white p-6 shadow">
-        <table className="w-full">
+      {/* Mobile cards */}
+      <div className="mt-6 grid grid-cols-1 gap-4 md:hidden">
+        {categories.map((cat) => (
+          <div key={cat.id} className="rounded bg-white p-4 shadow">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded bg-[#F5F5F5]">
+                {cat.icon ? (
+                  <img
+                    src={cat.icon}
+                    alt={cat.name}
+                    className="h-10 w-10 object-contain"
+                  />
+                ) : (
+                  "-"
+                )}
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold">{cat.name}</h3>
+                <p className="mt-1 break-all text-sm text-black/50">
+                  {cat.slug}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => deleteCategory(cat.id)}
+              className="mt-4 h-[40px] w-full rounded bg-[#DB4444] px-4 text-white"
+            >
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <div className="mt-8 hidden overflow-x-auto rounded bg-white p-6 shadow md:block">
+        <table className="w-full min-w-[700px]">
           <thead>
             <tr className="bg-[#F5F5F5]">
               <th className="p-4 text-left">Name</th>
@@ -173,10 +211,14 @@ export default function AdminCategoriesPage() {
             {categories.map((cat) => (
               <tr key={cat.id} className="border-t">
                 <td className="p-4">{cat.name}</td>
-                <td className="p-4">{cat.slug}</td>
+                <td className="p-4 break-all">{cat.slug}</td>
                 <td className="p-4">
                   {cat.icon ? (
-                    <img src={cat.icon} alt={cat.name} className="h-10 w-10 object-contain" />
+                    <img
+                      src={cat.icon}
+                      alt={cat.name}
+                      className="h-10 w-10 object-contain"
+                    />
                   ) : (
                     "-"
                   )}

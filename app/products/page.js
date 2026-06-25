@@ -118,9 +118,12 @@ export default function ProductsPage() {
                                     </div>
 
                                     <div className="mt-[8px] flex items-center gap-[8px]">
-                                        <span className="text-[#FFAD33]">★★★★★</span>
-                                        <span className="text-black/50">
-                                            ({item.ratingCount || 0})
+                                        <span className="text-[20px] text-[#FFAD33]">
+                                            {"★".repeat(Math.round(item.averageRating || 0))}
+                                            {"☆".repeat(5 - Math.round(item.averageRating || 0))}
+                                        </span>
+                                        <span className="poppins text-[14px] font-semibold text-black/50">
+                                            {item.totalReviews || 0}
                                         </span>
                                     </div>
                                 </div>
