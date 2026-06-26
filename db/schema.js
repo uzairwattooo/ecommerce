@@ -126,11 +126,22 @@ export const coupons = pgTable("coupons", {
     createdAt: timestamp("created_at").defaultNow(),
 });
 export const contactMessages = pgTable("contact_messages", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone").notNull(),
-  message: text("message").notNull(),
-  status: text("status").default("unread"),
-  createdAt: timestamp("created_at").defaultNow(),
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone").notNull(),
+    message: text("message").notNull(),
+    status: text("status").default("unread"),
+    createdAt: timestamp("created_at").defaultNow(),
+});
+export const heroBanners = pgTable("hero_banners", {
+    id: text("id").primaryKey(),
+    title: text("title").notNull(),
+    heading: text("heading").notNull(),
+    buttonText: text("button_text").default("Shop Now"),
+    buttonLink: text("button_link").default("/"),
+    image: text("image").notNull(),
+    sortOrder: integer("sort_order").default(0),
+    isActive: boolean("is_active").default(true),
+    createdAt: timestamp("created_at").defaultNow(),
 });

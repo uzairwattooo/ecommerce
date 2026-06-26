@@ -17,6 +17,7 @@ export default function AdminSidebar() {
         { name: "Coupons", href: "/admin/coupons" },
         { name: "Flash Sale Timer", href: "/admin/settings" },
         { name: "Messages", href: "/admin/messages" },
+        { name: "Banners", href: "/admin/banners" },
     ];
 
     const linkClass = (href) => {
@@ -50,51 +51,65 @@ export default function AdminSidebar() {
                         className="absolute inset-0 bg-black/50"
                     />
 
-                    <aside className="relative h-full w-[280px] bg-black px-6 py-8 text-white">
-                        <div className="flex items-center justify-between">
+                    <aside className="relative flex h-full w-[280px] flex-col bg-black text-white">
+                        <div className="flex items-center justify-between px-6 py-8">
                             <h2 className="inter text-[26px] font-semibold">Admin</h2>
+
                             <button onClick={() => setOpen(false)} className="text-[28px]">
                                 ×
                             </button>
                         </div>
 
-                        <nav className="mt-8 flex flex-col gap-3">
-                            {links.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    onClick={() => setOpen(false)}
-                                    className={linkClass(link.href)}
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
+                        <nav className="flex-1 overflow-y-auto scrollbar-hide px-6 pb-6">
+                            <div className="flex flex-col gap-3">
+                                {links.map((link) => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        onClick={() => setOpen(false)}
+                                        className={linkClass(link.href)}
+                                    >
+                                        {link.name}
+                                    </Link>
+                                ))}
 
-                            <Link
-                                href="/"
-                                onClick={() => setOpen(false)}
-                                className="mt-4 rounded px-4 py-3 text-white/80 hover:bg-white/10"
-                            >
-                                Back To Store
-                            </Link>
+                                <Link
+                                    href="/"
+                                    onClick={() => setOpen(false)}
+                                    className="mt-4 rounded px-4 py-3 text-white/80 hover:bg-white/10"
+                                >
+                                    Back To Store
+                                </Link>
+                            </div>
                         </nav>
                     </aside>
                 </div>
             )}
 
-            <aside className="sticky top-0 hidden h-screen w-[300px] bg-black px-6 py-8 text-white lg:block">
-                <h2 className="inter text-[28px] font-semibold">Admin</h2>
+            <aside className="sticky top-0 hidden h-screen w-[300px] bg-black text-white lg:flex lg:flex-col">
+                <div className="px-6 py-8">
+                    <h2 className="inter text-[28px] font-semibold">Admin</h2>
+                </div>
 
-                <nav className="mt-10 flex flex-col gap-3">
-                    {links.map((link) => (
-                        <Link key={link.href} href={link.href} className={linkClass(link.href)}>
-                            {link.name}
+               <nav className="flex-1 overflow-y-auto scrollbar-hide px-6 pb-6">
+                    <div className="flex flex-col gap-3">
+                        {links.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={linkClass(link.href)}
+                            >
+                                {link.name}
+                            </Link>
+                        ))}
+
+                        <Link
+                            href="/"
+                            className="mt-4 rounded px-4 py-3 text-white/80 hover:bg-white/10"
+                        >
+                            Back To Store
                         </Link>
-                    ))}
-
-                    <Link href="/" className="mt-4 rounded px-4 py-3 text-white/80 hover:bg-white/10">
-                        Back To Store
-                    </Link>
+                    </div>
                 </nav>
             </aside>
         </>
