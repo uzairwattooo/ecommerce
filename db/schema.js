@@ -105,17 +105,13 @@ export const categories = pgTable("categories", {
 });
 export const siteSettings = pgTable("site_settings", {
     id: text("id").primaryKey(),
-
     flashSaleEnabled: boolean("flash_sale_enabled").default(false),
-
     flashSaleDiscountPercent: integer(
         "flash_sale_discount_percent"
     ).default(0),
-
     flashSaleStartTime: timestamp(
         "flash_sale_start_time"
     ),
-
     flashSaleEndTime: timestamp(
         "flash_sale_end_time"
     ),
@@ -128,4 +124,13 @@ export const coupons = pgTable("coupons", {
     startAt: timestamp("start_at"),
     endAt: timestamp("end_at"),
     createdAt: timestamp("created_at").defaultNow(),
+});
+export const contactMessages = pgTable("contact_messages", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  message: text("message").notNull(),
+  status: text("status").default("unread"),
+  createdAt: timestamp("created_at").defaultNow(),
 });

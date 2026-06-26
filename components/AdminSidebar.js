@@ -16,6 +16,7 @@ export default function AdminSidebar() {
         { name: "Customers", href: "/admin/customers" },
         { name: "Coupons", href: "/admin/coupons" },
         { name: "Flash Sale Timer", href: "/admin/settings" },
+        { name: "Messages", href: "/admin/messages" },
     ];
 
     const linkClass = (href) => {
