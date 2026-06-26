@@ -64,8 +64,10 @@ export default function Checkout() {
       return;
     }
 
-    const session = await authClient.getSession();
-    if (!session?.data?.user) {
+    const response = await fetch("/api/auth/me");
+    const datatow = await response.json();
+
+    if (!response.ok || !datatow.user) {
       toast.error("Please login first");
       router.push("/login");
       return;
@@ -200,8 +202,10 @@ export default function Checkout() {
       toast.error("Cart is empty");
       return;
     }
-    const session = await authClient.getSession();
-    if (!session?.data?.user) {
+    const res = await fetch("/api/auth/me");
+    const data = await res.json();
+
+    if (!res.ok || !data.user) {
       toast.error("Please login first");
       router.push("/login");
       return;
@@ -432,19 +436,23 @@ export default function Checkout() {
 
               <button
                 type="button"
-                onClick={placeOrder}
+                onClick={form.paymentMethod === "bank" ? placeOrderWithStripe : placeOrder}
                 disabled={loading}
                 className="h-[56px] w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 disabled:opacity-60 sm:w-[190px]"
               >
-                {loading ? "Placing..." : "Place Order"}
+                {loading
+                  ? "Processing..."
+                  : form.paymentMethod === "bank"
+                    ? "Pay with Stripe"
+                    : "Place Order"}
               </button>
-              <button
+              {/* <button
                 onClick={placeOrderWithStripe}
                 disabled={loading}
                 className="ml-8 h-[56px] w-full cursor-pointer rounded-[4px] bg-[#DB4444] poppins text-[16px] font-medium text-white hover:opacity-85 disabled:opacity-60 sm:w-[190px]"
               >
                 {loading ? "Processing..." : "Pay with Stripe"}
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

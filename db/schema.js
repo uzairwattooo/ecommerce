@@ -82,6 +82,8 @@ export const orders = pgTable("orders", {
     paymentMethod: text("payment_method"),
     status: text("status").default("pending"),
     createdAt: timestamp("created_at").defaultNow(),
+    paymentStatus: text("payment_status").default("pending"),
+    stripeSessionId: text("stripe_session_id"),
 });
 export const orderItems = pgTable("order_items", {
     id: text("id").primaryKey(),
